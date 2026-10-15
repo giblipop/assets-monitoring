@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style data-fixed-zoom>html,body{touch-action:pan-x pan-y}@media(max-width:760px){input,select,textarea{font-size:16px!important}}</style>
+<title>HDEC-DONGAH JV Inventory Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Precision custom scrollbars for unified dark theme */
+        ::-webkit-scrollbar { width: 0px; height: 0px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: transparent; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: transparent; }
+    </style>
+
+    <style>
+#asset-history-container:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#asset-history-container:fullscreen .overflow-auto {
+    height: calc(100vh - 60px);
+}
+
+
+.fullscreen-active {
+    position: fixed !important;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+
+    border-radius: 0;
+
+    animation: expandAssetPanel 0.35s ease-out;
+}
+
+@keyframes expandAssetPanel {
+    from {
+        opacity: 0.7;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.restore-animation {
+    animation: collapseAssetPanel 0.3s ease-in;
+}
+
+@keyframes collapseAssetPanel {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0.95;
+        transform: scale(0.96);
+    }
+}
+
+@keyframes expandAssetPanel {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(.94);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+#inventory-table-body tr {
+    transition: all .25s ease;
+}
+
+#inventory-table-body tr:nth-child(even) {
+    background: rgba(255,255,255,.015);
+}
+
+#inventory-table-body tr:hover {
+    background: rgba(59,130,246,.08);
+    transform: scale(1.002);
+}
+
+thead {
+    box-shadow: 0 8px 20px rgba(0,0,0,.35);
+}
+
+#kpi-scroll-area {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#kpi-scroll-area::-webkit-scrollbar {
+    display: none;
+}
+
+#issue-tracker-modal > div {
+    display: flex;
+    flex-direction: column;
+    max-height: min(88vh, 760px);
+    max-height: min(88dvh, 760px);
+    border-color: #334155;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(2, 6, 23, .45);
+}
+
+#issue-tracker-modal > div > div:first-child {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #0f172a;
+}
+
+#issue-tracker-modal > div > div:last-child {
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+@media (max-width: 767px) {
+    #kpi-scroll-area {
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 0.75rem;
+        padding: 0.1rem 0 0.2rem;
+        scroll-behavior: smooth;
+        align-items: stretch;
+    }
+
+    #kpi-scroll-area > div {
+        min-width: 78%;
+        max-width: 78%;
+        flex: 0 0 78%;
+        scroll-snap-align: start;
+    }
+
+    #issue-tracker-modal {
+        align-items: flex-end;
+        padding: .5rem;
+    }
+
+    #issue-tracker-modal > div {
+        max-height: 92vh;
+        max-height: 92dvh;
+        border-radius: 16px 16px 12px 12px;
+    }
+
+    #issue-tracker-modal > div > div:first-child {
+        padding: .875rem 1rem;
+    }
+
+    #issue-tracker-modal > div > div:nth-child(2) {
+        padding: .625rem 1rem;
+    }
+
+    #issue-tracker-modal > div > div:last-child {
+        padding: .75rem;
+    }
+
+    .desktop-panel-grid {
+        display: flex !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 0.75rem;
+        padding: 0.1rem 0 0.2rem;
+        scroll-behavior: smooth;
+        align-items: stretch;
+        min-width: 0;
+    }
+
+    .desktop-panel-grid > section {
+        min-width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+        scroll-snap-align: start;
+        padding: 0.75rem !important;
+    }
+
+    .desktop-panel-grid > section > div:first-of-type {
+        gap: 0.5rem !important;
+        align-items: flex-start !important;
+    }
+
+    .desktop-panel-grid > section h2 {
+        font-size: 9px !important;
+        line-height: 1.4;
+    }
+
+    .desktop-panel-grid > section p {
+        font-size: 8.5px !important;
+        line-height: 1.4;
+    }
+
+    .desktop-panel-grid > section .flex.gap-3 {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 0.5rem !important;
+    }
+
+    .desktop-panel-grid > section .flex-1.min-h-\[260px\] {
+        min-height: 220px !important;
+    }
+
+    .desktop-panel-grid canvas {
+        min-height: 220px !important;
+        max-height: 220px !important;
+    }
+
+    .telemetry-chart-shell {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+    }
+
+    .telemetry-chart-shell::-webkit-scrollbar {
+        display: none;
+    }
+
+    .telemetry-chart-shell canvas {
+        min-width: 420px !important;
+        min-height: 220px !important;
+        display: block !important;
+        scroll-snap-align: start;
+    }
+
+    @media (max-width: 767px) {
+        .telemetry-chart-shell {
+            overflow-x: auto !important;
+            padding-bottom: 0.1rem;
+        }
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    #kpi-scroll-area > div {
+        padding: 1rem !important;
+    }
+
+    #kpi-scroll-area h3 {
+        font-size: clamp(1.8rem, 6vw, 2.35rem) !important;
+        line-height: 1.1 !important;
+    }
+
+    #kpi-scroll-area p,
+    #kpi-scroll-area .text-xs,
+    #kpi-scroll-area .text-\[10px\],
+    #kpi-scroll-area .text-\[8px\] {
+        font-size: 9px !important;
+    }
+
+    .desktop-panel-grid h2,
+    .desktop-panel-grid p,
+    #watchlist-container > div,
+    #asset-history-container thead th,
+    #asset-history-container tbody td {
+        line-height: 1.4 !important;
+    }
+
+    .desktop-panel-grid h2 {
+        font-size: 11px !important;
+    }
+
+    .desktop-panel-grid p {
+        font-size: 9px !important;
+    }
+
+    #watchlist-container > div {
+        font-size: 11px !important;
+    }
+
+    #asset-history-container thead th {
+        font-size: 8.5px !important;
+    }
+
+    #asset-history-container tbody td {
+        font-size: 9px !important;
+    }
+}
+    </style>
+    <link rel="stylesheet" href="../../style/modern-ui.css?v=20261013-darkblue4">
+    <script src="../../sidebar/ui-theme.js?v=20261012-theme3"></script>
+    <script src="../../sidebar/language.js?v=20261013-language3"></script>
+</head>
+<body class="bg-[#090d16] text-slate-100 antialiased h-screen w-screen overflow-hidden overscroll-none flex flex-col justify-between p-4 gap-4">
+
+    <header
+    class="
+    bg-[#0f172a]
+    border border-slate-800
+    rounded-xl
+    px-3 sm:px-4 md:px-6
+    py-3
+    flex flex-col sm:flex-row
+    items-start sm:items-center
+    justify-between
+    gap-3
+    shadow-xl
+">
+    
+    <!-- Left -->
+    <div class="flex items-center gap-3 min-w-0">
+        <div class="bg-gradient-to-tr from-blue-600 to-indigo-600 text-white p-2 rounded-lg shadow-md shadow-blue-500/10 shrink-0">
+            <i data-lucide="shield-alert" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </div>
+
+        <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+                <h1 class="text-xs sm:text-sm md:text-base font-bold tracking-wider text-white uppercase truncate">
+                    HDEC-DONGAH JOINT VENTURE
+                </h1>
+
+                <span class="text-[8px] sm:text-[9px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded">
+                    v1.0
+                </span>
+            </div>
+
+            <p class="text-[10px] sm:text-[11px] md:text-xs text-slate-400">
+                Advanced Inventory Monitoring
+            </p>
+        </div>
+    </div>
+
+    <!-- Right -->
+    <div class="flex items-center gap-2 sm:gap-4 md:gap-6 w-full sm:w-auto justify-between sm:justify-end">
+
+        <div class="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md text-[10px] sm:text-xs font-semibold border border-emerald-500/20 tracking-wide whitespace-nowrap">
+            <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+            <span>SYSTEM LIVE</span>
+        </div>
+
+        <div
+            class="text-[10px] sm:text-xs text-slate-400 font-mono tracking-wider bg-slate-950 px-2 sm:px-3 py-1.5 rounded-md border border-slate-900 whitespace-nowrap"
+            id="current-time">
+            ---
+        </div>
+
+    </div>
+
+</header>
+
+    <section id="kpi-scroll-area" class="grid grid-cols-2 xl:grid-cols-4 gap-4">
+
+    <!-- TOTAL ASSETS -->
+    <div class="group relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[0_0_30px_rgba(59,130,246,.15)]">
+
+        <div class="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>
+
+        <div class="flex justify-between items-start">
+
+            <div>
+                <p class="text-xs uppercase tracking-[0.25em] text-slate-500">
+                    Total Assets Types
+                </p>
+
+                <h3
+                    id="kpi-total-items"
+                    class="font-black text-4xl text-white mt-3 mono"
+                >
+                    0
+                </h3>
+
+                <div class="flex items-center gap-1 mt-2 text-emerald-400 text-xs font-semibold">
+                    <i data-lucide="trending-up" class="w-3 h-3"></i>
+                    +12%
+                </div>
+            </div>
+
+            <div class="bg-blue-500/10 text-blue-400 p-3 rounded-xl">
+                <i data-lucide="database" class="w-6 h-6"></i>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- REQUESTS -->
+
+    <div
+        id="issued-month-card"
+        class="group relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-[0_0_30px_rgba(99,102,241,.15)] cursor-pointer select-none"
+        title="View issued items by month"
+    >
+
+        <div class="absolute top-0 left-0 w-full h-1 bg-indigo-500"></div>
+
+        <div class="flex justify-between items-start">
+
+            <div>
+                <p class="text-xs uppercase tracking-[0.25em] text-slate-500">
+                    Issued This Month
+                </p>
+
+                <h3
+                    id="kpi-total-requests"
+                    class="font-black text-4xl text-white mt-3 mono"
+                >
+                    0
+                </h3>
+
+                <div class="flex items-center gap-1 mt-2 text-indigo-400 text-xs font-semibold">
+                    <i data-lucide="activity" class="w-3 h-3"></i>
+                    Live
+                </div>
+            </div>
+
+            <div class="bg-indigo-500/10 text-indigo-400 p-3 rounded-xl">
+                <i data-lucide="cpu" class="w-6 h-6"></i>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- LOW STOCK -->
+
+    <div class="group relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-[0_0_30px_rgba(245,158,11,.15)]">
+
+        <div class="absolute top-0 left-0 w-full h-1 bg-amber-500"></div>
+
+        <div class="flex justify-between items-start">
+
+            <div>
+                <p class="text-xs uppercase tracking-[0.25em] text-slate-500">
+                    Low Stock
+                </p>
+
+                <h3
+                    id="kpi-low-stock"
+                    class="font-black text-4xl text-amber-400 mt-3 mono"
+                >
+                    0
+                </h3>
+
+                <div class="flex items-center gap-1 mt-2 text-amber-400 text-xs font-semibold">
+                    Attention Required
+                </div>
+            </div>
+
+            <div class="bg-amber-500/10 text-amber-400 p-3 rounded-xl">
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- OUT OF STOCK -->
+
+    <div class="group relative overflow-hidden bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:border-rose-500/40 hover:shadow-[0_0_30px_rgba(244,63,94,.15)]">
+
+        <div class="absolute top-0 left-0 w-full h-1 bg-rose-500"></div>
+
+        <div class="flex justify-between items-start">
+
+            <div>
+                <p class="text-xs uppercase tracking-[0.25em] text-slate-500">
+                    Out Of Stock
+                </p>
+
+                <h3
+                    id="kpi-out-stock"
+                    class="font-black text-4xl text-rose-400 mt-3 mono"
+                >
+                    0
+                </h3>
+
+                <div class="flex items-center gap-1 mt-2 text-rose-400 text-xs font-semibold">
+                    Critical
+                </div>
+            </div>
+
+            <div class="bg-rose-500/10 text-rose-400 p-3 rounded-xl">
+                <i data-lucide="alert-octagon" class="w-6 h-6"></i>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+    <style>
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+</style>
+
+<div class="flex-1 min-h-0 overflow-hidden touch-pan-x scrollbar-hide">
+
+    <div class="desktop-panel-grid grid grid-cols-1 gap-4 xl:grid-cols-3 h-full min-w-0">
+
+        <!-- Telemetry Chart -->
+        <section class="bg-[#0f172a] border border-slate-800 rounded-xl p-3 sm:p-4 xl:col-span-2 flex flex-col justify-between min-h-0 shadow-md">
+
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-slate-800 pb-2 shrink-0">
+
+                <div>
+                    <h2 class="text-[10px] sm:text-xs font-bold text-white tracking-wide uppercase">
+                        Telemetry Node Distribution
+                    </h2>
+
+                    <p class="text-[10px] text-slate-400">
+                        Distributed items vs available stock
+                    </p>
+                </div>
+
+                <div class="flex gap-3 text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider font-mono text-slate-300">
+
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-sm bg-blue-500"></span>
+                        Items
+                    </span>
+
+                    <span class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-sm bg-emerald-500"></span>
+                        Stock
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="telemetry-chart-shell flex-1 min-h-[260px] sm:min-h-[300px] pt-3 relative">
+                <canvas id="inventoryChart" class="block w-full h-full min-w-[420px] rounded-lg"></canvas>
+            </div>
+
+        </section>
+
+        <!-- Alert Logs -->
+        <section class="bg-[#0f172a] border border-slate-800 rounded-xl p-4 flex flex-col min-h-0 shadow-md">
+
+            <!-- Minimal Alert Logs -->
+<section class="bg-[#0f172a] border border-slate-800 rounded-lg p-3 flex flex-col shadow-sm h-full">
+
+    <!-- Header -->
+    <div class="border-b border-slate-800 pb-2 shrink-0">
+
+        <h2 class="text-[11px] font-semibold text-white uppercase tracking-wide">
+            Inventory Alerts
+        </h2>
+
+        <p class="text-[10px] text-slate-500 mt-0.5">
+            Low stock & depleted items
+        </p>
+
+    </div>
+
+    <!-- Alert List -->
+    <div
+        id="watchlist-container"
+        class="flex-1 overflow-y-auto pt-2 space-y-1.5 min-h-0"
+    >
+        <!-- Alert Item Example -->
+
+        <div class="flex items-center justify-between
+            px-2 py-1
+            md:px-2 md:py-1.5
+            rounded-md
+            bg-slate-900/60
+            border border-slate-800">
+            <span class="text-[11px] text-slate-300 truncate">
+                Laptop Battery
+            </span>
+
+            <span class="text-[10px] font-medium text-amber-400">
+                LOW
+            </span>
+        </div>
+
+        <div class="flex items-center justify-between px-2 py-1.5 rounded-md bg-slate-900/60 border border-slate-800">
+            <span class="text-[11px] text-slate-300 truncate">
+                Printer Toner
+            </span>
+
+            <span class="text-[10px] font-medium text-rose-400">
+                OUT
+            </span>
+        </div>
+
+    </div>
+
+</section>
+
+
+    </div>
+
+</div>
+
+    <section
+2
+id="asset-history-container"
+3
+class="bg-[#0f172a] border border-slate-800 rounded-xl flex flex-col flex-1 min-h-0 overflow-hidden shadow-md
+4
+transition-all duration-500 ease-in-out"
+5
+>
+
+    <!-- HEADER -->
+    <div class="px-3 sm:px-5 py-2.5 border-b border-slate-800 bg-slate-950/40 shrink-0">
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+            <!-- LEFT -->
+            <div class="flex items-start justify-between sm:block">
+
+                <div>
+                    <h2 class="text-xs font-bold text-white tracking-wide uppercase dashboard-history-title">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8"></path>
+                            <path d="M3 3v5h5"></path>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+                        Asset History Sheet
+                    </h2>
+                    <p class="text-[11px] text-slate-400">
+                        Your workspace activity history
+                    </p>
+                </div>
+
+                <!-- MOBILE FULLSCREEN -->
+                <button
+                    id="fullscreen-btn-mobile"
+                    class="sm:hidden opacity-70 hover:opacity-100 text-slate-300 hover:text-white p-1.5 rounded-md transition-all"
+                >
+                    <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                </button>
+
+            </div>
+
+            <!-- SEARCH + DESKTOP FULLSCREEN -->
+            <div class="flex items-center gap-2">
+
+                <div class="relative w-full sm:w-64 md:w-72 lg:w-80">
+
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-slate-600">
+                        <i data-lucide="binary" class="w-3.5 h-3.5"></i>
+                    </span>
+
+                    <input
+                        type="text"
+                        id="table-search"
+                        placeholder="FILTER ACTIVITY..."
+                        class="w-full pl-8 pr-3 py-1.5 text-[11px] bg-slate-950 text-slate-200 border border-slate-800 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+
+                </div>
+
+                <!-- DESKTOP FULLSCREEN -->
+                <button
+                    id="fullscreen-btn"
+                    class="hidden sm:flex items-center justify-center opacity-70 hover:opacity-100 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-md p-1.5 transition-all duration-200"
+                    title="Fullscreen"
+                >
+                    <i data-lucide="maximize-2" class="w-4 h-4"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+    <div id="table-wrapper" class="flex-1 overflow-auto min-h-0 bg-[#0c1322] overscroll-contain">
+
+        <table class="w-full text-left border-collapse">
+
+            <thead class="sticky top-0 bg-[#0f172a] text-[8px] sm:text-[9px] md:text-[10px] lg:text-[11px] font-bold text-slate-400 uppercase tracking-widest border-b border-slate-800 z-10">
+                <tr>
+                    <th class="py-2 px-3 sm:px-5">Activity</th>
+                    <th class="py-2 px-3 sm:px-5">Profile name</th>
+                    <th class="py-2 px-3 sm:px-5">Area</th>
+                    <th class="py-2 px-3 sm:px-5">Details</th>
+                    <th class="py-2 px-3 sm:px-5">Date and time</th>
+                </tr>
+            </thead>
+
+            <tbody
+    id="inventory-table-body"
+    class="divide-y divide-slate-900 text-[9px] sm:text-[10px] md:text-[11px] lg:text-xs font-medium text-slate-300"
+>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+    <footer class="flex justify-between items-center px-1 text-[9px] text-slate-600 shrink-0 uppercase tracking-widest font-mono">
+        <div>SYSTEM STATUS: Active</div>
+        <div>&copy; HDEC-DONGAH JOINT VENTURE</div>
+    </footer>
+
+    <div
+        id="issue-tracker-modal"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-sm p-4"
+    >
+        <div class="w-full max-w-3xl rounded-2xl border border-slate-700 bg-[#0f172a] shadow-2xl shadow-slate-950/60 overflow-hidden">
+            <div class="flex items-center justify-between border-b border-slate-800 px-5 py-4">
+                <div>
+                    <p class="text-[10px] uppercase tracking-[0.3em] text-indigo-400">Issue Tracker</p>
+                    <h3 id="issue-tracker-month-label" class="mt-1 text-xl font-bold text-white">Month</h3>
+                </div>
+
+                <button
+                    id="issue-tracker-close"
+                    class="rounded-lg border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-300 hover:border-slate-500 hover:text-white"
+                    type="button"
+                >
+                    Close
+                </button>
+            </div>
+
+            <div class="flex items-center justify-between border-b border-slate-800 bg-slate-950/40 px-5 py-3">
+                <button
+                    id="issue-tracker-prev"
+                    type="button"
+                    class="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-700 bg-slate-900 text-xl text-slate-200 transition hover:border-indigo-500 hover:text-indigo-300"
+                    aria-label="Previous month"
+                >
+                    <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                </button>
+
+                <div class="text-center">
+                    <div class="text-[10px] uppercase tracking-[0.25em] text-slate-500">Issued Items</div>
+                    <div id="issue-tracker-summary" class="mt-1 text-sm font-semibold text-slate-200">0 items</div>
+                </div>
+
+                <button
+                    id="issue-tracker-next"
+                    type="button"
+                    class="inline-flex items-center justify-center h-10 w-10 rounded-full border border-slate-700 bg-slate-900 text-xl text-slate-200 transition hover:border-indigo-500 hover:text-indigo-300"
+                    aria-label="Next month"
+                >
+                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="max-h-[60vh] overflow-y-auto p-4">
+                <div id="issue-tracker-list" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+const container = document.getElementById("asset-history-container");
+
+const desktopBtn = document.getElementById("fullscreen-btn");
+const mobileBtn = document.getElementById("fullscreen-btn-mobile");
+
+function toggleFullscreen() {
+
+    const isFullscreen =
+        container.classList.contains("fullscreen-active");
+
+    if (!isFullscreen) {
+
+        container.classList.add("fullscreen-active");
+
+        desktopBtn.innerHTML =
+            '<i data-lucide="minimize-2" class="w-4 h-4"></i>';
+
+        if (mobileBtn) {
+            mobileBtn.innerHTML =
+                '<i data-lucide="minimize-2" class="w-4 h-4"></i>';
+        }
+
+    } else {
+
+        container.classList.add("restore-animation");
+
+        setTimeout(() => {
+            container.classList.remove(
+                "fullscreen-active",
+                "restore-animation"
+            );
+        }, 250);
+
+        desktopBtn.innerHTML =
+            '<i data-lucide="maximize-2" class="w-4 h-4"></i>';
+
+        if (mobileBtn) {
+            mobileBtn.innerHTML =
+                '<i data-lucide="maximize-2" class="w-4 h-4"></i>';
+        }
+
+    }
+
+    lucide.createIcons();
+}
+
+
+desktopBtn.addEventListener("click", toggleFullscreen);
+
+if (mobileBtn) {
+    mobileBtn.addEventListener("click", toggleFullscreen);
+}
+
+</script>
+   <script>
+const tableBody = document.getElementById("inventory-table-body");
+const searchInput = document.getElementById("table-search");
+const watchlistContainer = document.getElementById("watchlist-container");
+
+let inventoryData = [];
+let activityHistory = [];
+let inventoryChart = null;
+let currentSort = {
+    field: "name",
+    direction: "asc"
+};
+
+/* =====================================
+   CLOCK
+===================================== */
+function updateClock() {
+    document.getElementById("current-time").textContent =
+        new Date().toLocaleString();
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+/* =====================================
+   INVENTORY FETCH
+===================================== */
+
+async function fetchInventory() {
+    try {
+
+        const response = await fetch(
+            `data.php?t=${Date.now()}`,
+            {
+                cache: "no-store"
+            }
+        );
+
+        if (!response.ok)
+            throw new Error(`HTTP ${response.status}`);
+
+
+        const data = await response.json();
+
+        // store raw response for grouped/table-level summaries
+        window.latestRawData = data;
+        activityHistory = Array.isArray(data.activity_history) ? data.activity_history : [];
+
+        inventoryData = flattenInventory(data);
+
+        updateKPIs(data, inventoryData);
+
+        buildUI(inventoryData);
+
+        buildChart(data);
+
+        localStorage.setItem(
+            "inventoryCache",
+            JSON.stringify(data)
+        );
+
+        return data;
+
+    } catch (error) {
+
+        console.error("Inventory Error:", error);
+
+        const cached =
+            localStorage.getItem("inventoryCache");
+
+        if (cached) {
+
+
+            const data = JSON.parse(cached);
+
+            window.latestRawData = data;
+            activityHistory = Array.isArray(data.activity_history) ? data.activity_history : [];
+
+            inventoryData = flattenInventory(data);
+
+            updateKPIs(data, inventoryData);
+
+            buildUI(inventoryData);
+
+            buildChart(data);
+
+            return data;
+        }
+    }
+}
+
+/* =====================================
+   FLATTEN JSON
+===================================== */
+
+function flattenInventory(data) {
+
+    const arr = [];
+
+    Object.entries(data.inventory).forEach(
+        ([tableName, table]) => {
+
+            table.rows.forEach(row => {
+
+                arr.push({
+
+    item:
+        row.item ||
+        tableName,
+
+    asset_code:
+        row.asset_code ||
+        "-",
+
+    sku:
+        row.sku ||
+        row.registry_sku ||
+        "-",
+
+    name:
+        row.name ||
+        "-",
+
+    job_trade:
+        row.job_trade ||
+        "-",
+
+    work_area:
+        row.work_area ||
+        "-",
+
+    date_issued:
+        row.date_issued ||
+        "-",
+
+    status:
+        row.status ||
+        "-",
+
+    remarks:
+        row.remarks ||
+        "-",
+
+    stock:
+        parseInt(
+            row.stock ??
+            row.volume_capacity ??
+            0
+        ),
+
+    threshold:
+        parseInt(
+            row.threshold ??
+            row.floor_limit ??
+            0
+        ),
+
+    icon:
+        row.icon ||
+        "package"
+});
+
+            });
+
+        });
+
+    return arr;
+}
+
+/* =====================================
+   KPI ENGINE
+===================================== */
+
+function parseIssueDate(value) {
+    if (!value || value === "-") return null;
+
+    const raw = String(value).trim();
+    const cleaned = raw.replace(/\s+/g, " ");
+
+    const direct = new Date(cleaned);
+    if (!Number.isNaN(direct.getTime())) {
+        return direct;
+    }
+
+    const iso = cleaned.match(/^\d{4}-\d{2}-\d{2}$/);
+    if (iso) {
+        return new Date(`${cleaned}T00:00:00`);
+    }
+
+    const numeric = cleaned.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+    if (numeric) {
+        const [, first, second, year] = numeric;
+        const month = Math.min(Number(first), Number(second));
+        const day = Math.max(Number(first), Number(second));
+        return new Date(`${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}T00:00:00`);
+    }
+
+    return null;
+}
+
+function getIssueRecords(data) {
+    const rows = [];
+
+    Object.entries(data?.inventory || {}).forEach(([tableName, table]) => {
+        (table?.rows || []).forEach(row => {
+            const issuedDate = parseIssueDate(
+                row?.date_issued ??
+                row?.issued_date ??
+                row?.issue_date ??
+                row?.dateissued
+            );
+
+            if (!issuedDate) return;
+
+            rows.push({
+                table_name: tableName,
+                item: row?.item || tableName,
+                asset_code: row?.asset_code || "-",
+                name: row?.name || "-",
+                status: row?.status || "-",
+                date_issued: new Date(issuedDate),
+                monthKey: `${issuedDate.getFullYear()}-${String(issuedDate.getMonth() + 1).padStart(2, "0")}`
+            });
+        });
+    });
+
+    return rows.sort((a, b) => b.date_issued - a.date_issued);
+}
+
+function getIssuedThisMonth(data) {
+    const now = new Date();
+    const thisYear = now.getFullYear();
+    const thisMonth = now.getMonth();
+
+    return getIssueRecords(data).filter(item =>
+        item.date_issued.getFullYear() === thisYear &&
+        item.date_issued.getMonth() === thisMonth
+    ).length;
+}
+
+function updateKPIs(data, inventoryArray) {
+
+    const tableSummaries = Object.entries(
+        data?.inventory || {}
+    ).map(([tableName, table]) => ({
+        name: tableName,
+        count: Number(table?.count || 0),
+        available: Number(table?.available_stocks || 0)
+    }));
+
+    const totalAssets =
+        tableSummaries.length > 0
+            ? tableSummaries.length
+            : inventoryArray.length;
+
+    const lowStock =
+        tableSummaries.filter(table => {
+            const available = table.available;
+            const count = table.count || 0;
+            return available > 0 &&
+                available <= Math.max(1, Math.ceil(count * 0.2));
+        }).length;
+
+    const depleted =
+        tableSummaries.filter(table =>
+            Number(table.available) === 0
+        ).length;
+
+    const requests =
+        getIssuedThisMonth(data);
+
+    document.getElementById(
+        "kpi-total-items"
+    ).textContent =
+        totalAssets.toLocaleString();
+
+    document.getElementById(
+        "kpi-total-requests"
+    ).textContent =
+        requests.toLocaleString();
+
+    document.getElementById(
+        "kpi-low-stock"
+    ).textContent =
+        lowStock.toLocaleString();
+
+    document.getElementById(
+        "kpi-out-stock"
+    ).textContent =
+        depleted.toLocaleString();
+}
+
+function getMonthOptions(data) {
+    const records = getIssueRecords(data);
+    const keys = [...new Set(records.map(item => item.monthKey))];
+    return keys.sort((a, b) => a.localeCompare(b));
+}
+
+function renderIssueTrackerModal(data, selectedMonthKey = null) {
+    const modal = document.getElementById("issue-tracker-modal");
+    const listEl = document.getElementById("issue-tracker-list");
+    const summaryEl = document.getElementById("issue-tracker-summary");
+    const monthLabelEl = document.getElementById("issue-tracker-month-label");
+
+    const monthKeys = getMonthOptions(data);
+    const nowKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
+    const latestKey = monthKeys[monthKeys.length - 1] || "";
+    const activeKey = selectedMonthKey || (monthKeys.includes(nowKey) ? nowKey : latestKey);
+    const entries = getIssueRecords(data).filter(item => item.monthKey === activeKey);
+
+    const [year, month] = activeKey.split("-").map(Number);
+    const monthDate = new Date(year, month - 1, 1);
+
+    monthLabelEl.textContent = monthDate.toLocaleString("en-US", {
+        month: "long",
+        year: "numeric"
+    });
+
+    summaryEl.textContent = `${entries.length} item${entries.length === 1 ? "" : "s"}`;
+
+    if (!entries.length) {
+        listEl.innerHTML = `
+            <div class="rounded-xl border border-dashed border-slate-700 bg-slate-950/30 p-6 text-center text-slate-400">
+                No issued items recorded for this month.
+            </div>
+        `;
+        return;
+    }
+
+    listEl.innerHTML = entries.map(item => `
+        <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3">
+            <div class="min-w-0">
+                <div class="truncate text-sm font-semibold text-white">${item.name}</div>
+                <div class="mt-1 text-[11px] text-slate-400">
+                    <span class="font-mono text-blue-300">${item.asset_code}</span>
+                    <span class="mx-2 text-slate-600">•</span>
+                    <span>${item.table_name}</span>
+                </div>
+            </div>
+
+            <div class="text-right">
+                <div class="text-[11px] uppercase tracking-[0.2em] text-slate-500">Issued</div>
+                <div class="mt-1 text-sm font-semibold text-indigo-300">${item.date_issued.toLocaleDateString("en-GB")}</div>
+            </div>
+        </div>
+    `).join("");
+
+    const prevBtn = document.getElementById("issue-tracker-prev");
+    const nextBtn = document.getElementById("issue-tracker-next");
+    const currentIndex = monthKeys.indexOf(activeKey);
+
+    const hasOlderMonth = currentIndex > 0;
+    const hasNewerMonth = currentIndex < monthKeys.length - 1;
+
+    prevBtn.disabled = !hasOlderMonth;
+    prevBtn.classList.toggle("opacity-40", !hasOlderMonth);
+    prevBtn.classList.toggle("cursor-not-allowed", !hasOlderMonth);
+
+    nextBtn.disabled = !hasNewerMonth;
+    nextBtn.classList.toggle("opacity-40", !hasNewerMonth);
+    nextBtn.classList.toggle("cursor-not-allowed", !hasNewerMonth);
+
+    prevBtn.onclick = () => {
+        if (hasOlderMonth) {
+            renderIssueTrackerModal(data, monthKeys[currentIndex - 1]);
+        }
+    };
+
+    nextBtn.onclick = () => {
+        if (hasNewerMonth) {
+            renderIssueTrackerModal(data, monthKeys[currentIndex + 1]);
+        }
+    };
+
+    modal.classList.remove("hidden");
+}
+
+const issueTrackerModal = document.getElementById("issue-tracker-modal");
+const issueTrackerClose = document.getElementById("issue-tracker-close");
+const issuedMonthCard = document.getElementById("issued-month-card");
+
+issuedMonthCard.addEventListener("click", () => {
+    renderIssueTrackerModal(window.latestRawData || { inventory: {} }, null);
+});
+
+issueTrackerClose.addEventListener("click", () => {
+    issueTrackerModal.classList.add("hidden");
+});
+
+issueTrackerModal.addEventListener("click", event => {
+    if (event.target === issueTrackerModal) {
+        issueTrackerModal.classList.add("hidden");
+    }
+});
+
+/* =====================================
+   STATE DETECTION
+===================================== */
+
+function getState(stock, threshold) {
+
+    if (stock === 0)
+        return {
+            label: "DEPLETED",
+            badge:
+                "bg-rose-500/10 text-rose-400 border-rose-500/20",
+            text: "text-rose-400"
+        };
+
+    if (stock <= threshold)
+        return {
+            label: "LOW STOCK",
+            badge:
+                "bg-amber-500/10 text-amber-400 border-amber-500/20",
+            text: "text-amber-400"
+        };
+
+    return {
+        label: "AVAILABLE",
+        badge:
+            "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+        text: "text-emerald-400"
+    };
+}
+function getStatusBadge(status) {
+
+    switch ((status || "").toUpperCase()) {
+
+        case "ISSUED":
+            return "bg-blue-500/10 text-blue-400 border-blue-500/20";
+
+        case "RETURNED":
+            return "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+
+        case "DAMAGED":
+            return "bg-rose-500/10 text-rose-400 border-rose-500/20";
+
+        case "LOST":
+            return "bg-amber-500/10 text-amber-400 border-amber-500/20";
+
+        case "UNDER REPAIR":
+            return "bg-violet-500/10 text-violet-400 border-violet-500/20";
+
+        default:
+            return "bg-slate-500/10 text-slate-300 border-slate-500/20";
+    }
+}
+/* =====================================
+   UI BUILDER
+===================================== */
+
+function buildUI(data, filter = "") {
+
+    renderActivityHistory(filter);
+    watchlistContainer.innerHTML = "";
+
+    // Build grouped category summaries for the alerts panel using raw data.php response when available
+    watchlistContainer.innerHTML = "";
+
+    const raw = window.latestRawData && window.latestRawData.inventory ? window.latestRawData.inventory : null;
+
+    let summaries = [];
+
+    if (raw) {
+        Object.entries(raw).forEach(([tableName, tbl]) => {
+            const count = Number(tbl.count || 0);
+            const available = Number(tbl.available_stocks || 0);
+            const defective = (tbl.rows || []).filter(r => /defect|damag|fault/i.test(r.status || '')).length;
+
+            summaries.push({
+                name: tableName,
+                count,
+                available,
+                defective
+            });
+        });
+
+        summaries.sort((a, b) => a.available - b.available);
+
+        if (summaries.length === 0) {
+            watchlistContainer.innerHTML = `
+                <div class="flex items-center justify-center h-full text-emerald-400">
+                    NO ACTIVE ALERTS
+                </div>
+            `;
+        } else {
+            summaries.forEach(g => {
+                let state = 'AVAILABLE';
+                if (g.available === 0) state = 'CRITICAL';
+                else if (g.available <= 3) state = 'CRITICAL';
+                else if (g.available <= Math.max(1, Math.ceil(g.count * 0.2))) state = 'LOW STOCK';
+
+                let badge = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+                if (state.includes('CRITICAL')) badge = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+                else if (state.includes('LOW')) badge = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+                else if (g.defective > 0) badge = 'bg-violet-500/10 text-violet-400 border-violet-500/20';
+
+                const el = document.createElement('div');
+                el.className = 'flex items-center justify-between px-2 py-1.5 rounded-md bg-slate-900/60 border border-slate-800';
+                el.innerHTML = `
+                    <div class="truncate">
+                        <div class="text-[11px] font-semibold">${String(g.name).toUpperCase()}</div>
+                        <div class="text-[10px] text-slate-500">${g.defective ? g.defective + ' defective' : ''}</div>
+                    </div>
+
+                    <div class="text-right min-w-[110px]">
+                        <div class="font-mono text-[12px]">${g.available.toLocaleString()} available</div>
+                        <div class="text-[10px] font-semibold uppercase ${badge}">${state}</div>
+                    </div>
+                `;
+
+                watchlistContainer.appendChild(el);
+            });
+        }
+
+    } else {
+        // Fallback: build summaries from flattened row data
+        const groups = {};
+
+        data.forEach(it => {
+            const key = (it.item || 'Unknown').toString();
+            if (!groups[key]) groups[key] = { name: key, available: 0, defective: 0, count: 0 };
+            groups[key].available += Number(it.stock) || 0;
+            groups[key].count += 1;
+            if (/(defect|damag|fault)/i.test(it.status || '')) groups[key].defective++;
+        });
+
+        const groupArr = Object.values(groups).sort((a, b) => a.available - b.available);
+
+        if (groupArr.length === 0) {
+            watchlistContainer.innerHTML = `
+                <div class="flex items-center justify-center h-full text-emerald-400">
+                    NO ACTIVE ALERTS
+                </div>
+            `;
+        } else {
+            groupArr.forEach(g => {
+                let state = 'AVAILABLE';
+                if (g.available === 0) state = 'CRITICAL';
+                else if (g.available <= 3) state = 'CRITICAL';
+                else if (g.available <= Math.max(1, Math.ceil(g.count * 0.2))) state = 'LOW STOCK';
+
+                let badge = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+                if (state.includes('CRITICAL')) badge = 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+                else if (state.includes('LOW')) badge = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+                else if (g.defective > 0) badge = 'bg-violet-500/10 text-violet-400 border-violet-500/20';
+
+                const el = document.createElement('div');
+                el.className = 'flex items-center justify-between px-2 py-1.5 rounded-md bg-slate-900/60 border border-slate-800';
+                el.innerHTML = `
+                    <div class="truncate">
+                        <div class="text-[11px] font-semibold">${String(g.name).toUpperCase()}</div>
+                        <div class="text-[10px] text-slate-500">${g.defective ? g.defective + ' defective' : ''}</div>
+                    </div>
+
+                    <div class="text-right min-w-[110px]">
+                        <div class="font-mono text-[12px]">${g.available.toLocaleString()} available</div>
+                        <div class="text-[10px] font-semibold uppercase ${badge}">${state}</div>
+                    </div>
+                `;
+
+                watchlistContainer.appendChild(el);
+            });
+        }
+    }
+
+    lucide.createIcons();
+}
+
+function escapeActivityText(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[character]);
+}
+
+function activityTitle(value) {
+    const label = String(value ?? "").replace(/[_-]+/g, " ");
+    const knownActions = {
+        login: "Signed in",
+        logout: "Signed out",
+        "failed login": "Failed sign-in"
+    };
+    return knownActions[label.toLowerCase()] || label.replace(/\b\w/g, character => character.toUpperCase());
+}
+
+function renderActivityHistory(filter = "") {
+    const normalizedFilter = filter.trim().toLowerCase();
+    const entries = activityHistory.filter(entry =>
+        [
+            entry.Action,
+            entry.ProfileName,
+            entry.Module,
+            entry.DateTime,
+            entry.Details
+        ].some(value => String(value ?? "").toLowerCase().includes(normalizedFilter))
+    );
+
+    tableBody.replaceChildren();
+    if (!entries.length) {
+        const row = document.createElement("tr");
+        row.innerHTML = `<td colspan="5" class="px-4 py-8 text-center text-slate-500">${normalizedFilter ? "No matching activity found." : "No activity has been recorded yet."}</td>`;
+        tableBody.appendChild(row);
+        return;
+    }
+
+    entries.forEach(entry => {
+        let details = entry.Details || "";
+        try {
+            const parsed = typeof details === "string" ? JSON.parse(details) : details;
+            if (parsed && typeof parsed === "object") {
+                details = Object.entries(parsed)
+                    .map(([key, value]) => {
+                        const label = key.replace(/([A-Z])/g, " $1").replace(/_/g, " ").replace(/\b\w/g, character => character.toUpperCase());
+                        const displayValue = typeof value === "boolean" ? (value ? "Yes" : "No") : value;
+                        return `${label}: ${displayValue}`;
+                    })
+                    .join(" · ");
+            }
+        } catch {
+            details = String(details);
+        }
+
+        const row = document.createElement("tr");
+        row.className = "border-b border-slate-900/80 hover:bg-slate-900/30";
+        row.innerHTML = `
+            <td class="px-3 py-3 sm:px-5 font-semibold text-slate-100">${escapeActivityText(activityTitle(entry.Action || "Activity"))}</td>
+            <td class="px-3 py-3 sm:px-5 text-slate-300">${escapeActivityText(entry.ProfileName || "Unknown user")}</td>
+            <td class="px-3 py-3 sm:px-5 text-slate-400">${escapeActivityText(activityTitle(entry.Module || "-"))}</td>
+            <td class="px-3 py-3 sm:px-5 text-slate-400 max-w-[360px] break-words">${escapeActivityText(details || "-")}</td>
+            <td class="px-3 py-3 sm:px-5 whitespace-nowrap font-mono text-slate-400">${escapeActivityText(entry.DateTime || "-")}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+/* =====================================
+   CHART ENGINE
+===================================== */
+
+function buildChart(data) {
+    const canvas = document.getElementById("inventoryChart");
+
+    if (!canvas) {
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+    const mobileView = window.innerWidth < 768;
+
+    const inventoryEntries = Object.entries(data.inventory || {});
+
+    if (!inventoryEntries.length) {
+        if (inventoryChart) inventoryChart.destroy();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+    }
+
+    const labels = inventoryEntries.map(([tableName]) => tableName);
+
+    const distributedItems = inventoryEntries.map(([, table]) => {
+        const value = Number(table?.count ?? 0);
+        return Number.isFinite(value) ? value : 0;
+    });
+
+    const availableStocks = inventoryEntries.map(([, table]) => {
+        const value = Number(table?.available_stocks ?? 0);
+        return Number.isFinite(value) ? value : 0;
+    });
+
+    const targetHeight = mobileView ? 220 : 320;
+    const darkTheme = document.documentElement.dataset.theme === "dark";
+    const chartText = darkTheme ? "#c5d2df" : "#526b7d";
+    const chartMuted = darkTheme ? "#9eafc0" : "#718698";
+    canvas.style.height = `${targetHeight}px`;
+    canvas.style.width = "100%";
+
+    if (inventoryChart)
+        inventoryChart.destroy();
+
+    inventoryChart =
+        new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: "Distributed Items",
+                        data: distributedItems,
+                        backgroundColor: "#2563eb"
+                    },
+                    {
+                        label: "Available Stocks",
+                        data: availableStocks,
+                        backgroundColor: "#14b8a6"
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 300
+                },
+                layout: {
+                    padding: {
+                        top: 8,
+                        right: 8,
+                        bottom: 0,
+                        left: 0
+                    }
+                },
+                interaction: {
+                    mode: "nearest",
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        position: mobileView ? "top" : "bottom",
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: "circle",
+                            font: {
+                                size: mobileView ? 8 : 10
+                            },
+                            color: chartText,
+                            padding: mobileView ? 8 : 12
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: darkTheme ? "#0d1824" : "#173b54",
+                        titleColor: "#ffffff",
+                        bodyColor: darkTheme ? "#dce7f0" : "#e5f1f2",
+                        borderColor: darkTheme ? "#47647d" : "#2c6874",
+                        borderWidth: 1,
+                        padding: 10
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: chartMuted,
+                            maxRotation: 0,
+                            minRotation: 0,
+                            autoSkip: false,
+                            maxTicksLimit: labels.length || 12,
+                            font: {
+                                size: mobileView ? 8 : 9
+                            },
+                            callback(value) {
+                                const label = this.getLabelForValue(value);
+                                return label.length > 12 ? `${label.slice(0, 12)}…` : label;
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: darkTheme ? "rgba(165, 184, 202, 0.18)" : "rgba(105, 130, 148, 0.18)"
+                        },
+                        ticks: {
+                            color: chartMuted,
+                            font: {
+                                size: mobileView ? 8 : 9
+                            }
+                        }
+                    }
+                }
+            }
+        });
+}
+
+/* =====================================
+   SORT ENGINE
+===================================== */
+
+function setSort(field) {
+
+    if (
+        currentSort.field === field
+    ) {
+
+        currentSort.direction =
+            currentSort.direction === "asc"
+                ? "desc"
+                : "asc";
+
+    } else {
+
+        currentSort.field = field;
+        currentSort.direction = "asc";
+    }
+
+    buildUI(
+        inventoryData,
+        searchInput.value
+    );
+}
+
+/* =====================================
+   CSV EXPORT
+===================================== */
+
+function exportCSV() {
+
+    const csv = [
+        [
+            "Item",
+            "Asset Code",
+            "Name",
+            "Trade",
+            "Area",
+            "Date"
+        ],
+        ...inventoryData.map(i => [
+            i.item,
+            i.asset_code,
+            i.name,
+            i.job_trade,
+            i.work_area,
+            i.date_issued
+        ])
+    ]
+        .map(r => r.join(","))
+        .join("\n");
+
+    const blob =
+        new Blob([csv]);
+
+    const link =
+        document.createElement("a");
+
+    link.href =
+        URL.createObjectURL(blob);
+
+    link.download =
+        "inventory.csv";
+
+    link.click();
+}
+
+/* =====================================
+   SEARCH
+===================================== */
+
+searchInput.addEventListener(
+    "input",
+    e => {
+
+        buildUI(
+            inventoryData,
+            e.target.value
+        );
+
+    }
+);
+
+/* =====================================
+   AUTO REFRESH
+===================================== */
+
+fetchInventory();
+
+setInterval(
+    fetchInventory,
+    60000
+);
+
+window.addEventListener("asset-monitor-theme-change", event => {
+    if (!inventoryChart) return;
+    const darkTheme = event.detail?.theme === "dark";
+    const text = darkTheme ? "#c5d2df" : "#526b7d";
+    const muted = darkTheme ? "#9eafc0" : "#718698";
+    inventoryChart.options.plugins.legend.labels.color = text;
+    inventoryChart.options.plugins.tooltip.backgroundColor = darkTheme ? "#0d1824" : "#173b54";
+    inventoryChart.options.plugins.tooltip.bodyColor = darkTheme ? "#dce7f0" : "#e5f1f2";
+    inventoryChart.options.plugins.tooltip.borderColor = darkTheme ? "#47647d" : "#2c6874";
+    inventoryChart.options.scales.x.ticks.color = muted;
+    inventoryChart.options.scales.y.ticks.color = muted;
+    inventoryChart.options.scales.y.grid.color = darkTheme
+        ? "rgba(165, 184, 202, 0.18)"
+        : "rgba(105, 130, 148, 0.18)";
+    inventoryChart.update("none");
+});
+
+   </script>
+
+   <script src="dashboard.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@2"></script>
+   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@2"></script>
+
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style data-fixed-zoom>html,body{touch-action:pan-x pan-y}@media(max-width:760px){input,select,textarea{font-size:16px!important}}</style>
+    <title>Asset Inventory</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css?v=20261013-columnfilters3">
+    <link rel="stylesheet" href="../../../style/modern-ui.css?v=20261013-darkblue7">
+    <script src="../../../sidebar/ui-theme.js?v=20261012-theme3"></script>
+    <script src="../../../sidebar/language.js?v=20261013-language3"></script>
+    <script src="../../../sidebar/ui-dialog.js?v=20261012-modal-theme3"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="search-container">
+        <h1 id="workspaceTitle">ASSET MONITORING</h1>
+
+        <div class="search-actions">
+            <div class="toolbar-buttons">
+                <div class="dropdown">
+                    <button id="deleteBtn" class="icon-btn" title="Delete Options">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    <div id="deleteDropdown" class="dropdown-content">
+                        <button id="deleteSelectedBtn">Select Rows</button>
+                        <button id="deleteAllBtn">Delete All</button>
+                    </div>
+                </div>
+
+                <button id="confirmDeleteBtn" class="icon-btn" title="Confirm Delete Selected" style="display: none; background: #ef4444; border-color: #dc2626; color: #fff;">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+
+                <div class="dropdown">
+                    <button id="importBtn" class="icon-btn" title="Import / Add Options">
+                        <i class="fa-solid fa-file-import"></i>
+                    </button>
+                    <div id="importDropdown" class="dropdown-content">
+                        <button id="importManualBtn">Add Manually</button>
+                        <button id="importFileBtn">Import File</button>
+                    </div>
+                </div>
+
+                <button id="exportBtn" class="icon-btn" title="Export">
+                    <i class="fa-solid fa-file-export"></i>
+                </button>
+
+                <button id="editTableBtn" class="icon-btn" title="Edit table structure and visibility" aria-label="Edit table structure and visibility" hidden>
+                    <i class="fa-solid fa-table-list"></i>
+                </button>
+            </div>
+
+            <input type="text" id="searchInput" placeholder="Search by name, asset code, model, status...">
+            <span id="resultCount" class="result-count" aria-live="polite">0 records</span>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table id="assetTable">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td colspan="100%" class="loading" id="loadingMessage">
+                        Loading items...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <nav id="workbookSheetTabs" class="workbook-sheet-tabs" aria-label="Workbook worksheets" hidden></nav>
+
+    <div id="addManualModal" class="modal-overlay manual-add-specific-overlay">
+        <div class="modal-content inventory-form-modal">
+            <div class="modal-header">
+                <h2 id="addModalTitle">Add New Asset Details</h2>
+                <button type="button" class="close-modal-btn" id="closeAddModalBtn">&times;</button>
+            </div>
+            <form id="addAssetForm">
+                <div class="modal-form-grid inventory-form-fields" id="addModalFormFields">
+                    </div>
+                <div class="edit-progress inventory-form-progress" id="addProgress" hidden>
+                    <div class="edit-progress-copy">
+                        <span id="addStepStatus" aria-live="polite"></span>
+                        <span id="addStepPercent"></span>
+                    </div>
+                    <div class="edit-progress-track" role="progressbar" aria-label="Add form progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <span id="addStepProgress"></span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelAddModalBtn">Cancel</button>
+                    <div class="edit-step-controls" id="addStepControls" hidden>
+                        <button type="button" class="btn-secondary" id="addBackBtn">Back</button>
+                        <button type="button" class="btn-primary" id="addNextBtn">Next</button>
+                    </div>
+                    <button type="submit" class="btn-primary" id="saveAddBtn">Save Asset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content inventory-form-modal">
+            <div class="modal-header">
+                <h2>Edit Asset Details</h2>
+                <button type="button" class="close-modal-btn" id="closeModalBtn">&times;</button>
+            </div>
+
+            <form id="editAssetForm">
+                <div id="modalFormFields" class="modal-form-grid inventory-form-fields">
+                    </div>
+                <div class="edit-progress" id="editProgress" hidden>
+                    <div class="edit-progress-copy">
+                        <span id="editStepStatus" aria-live="polite"></span>
+                        <span id="editStepPercent"></span>
+                    </div>
+                    <div class="edit-progress-track" role="progressbar" aria-label="Edit form progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <span id="editStepProgress"></span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelModalBtn">Cancel</button>
+                    <div class="edit-step-controls" id="editStepControls" hidden>
+                        <button type="button" class="btn-secondary" id="editBackBtn">Back</button>
+                        <button type="button" class="btn-primary" id="editNextBtn">Next</button>
+                    </div>
+                    <button type="submit" class="btn-primary" id="saveEditBtn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="tableEditorModal" class="modal-overlay table-editor-overlay" aria-hidden="true">
+        <section class="modal-content table-editor-modal" role="dialog" aria-modal="true" aria-labelledby="tableEditorTitle">
+            <div class="modal-header">
+                <div>
+                    <h2 id="tableEditorTitle">Edit table</h2>
+                    <p class="table-editor-subtitle">Control which fields and records appear, and choose where attachment buttons are available.</p>
+                </div>
+                <button type="button" class="close-modal-btn" id="closeTableEditor" aria-label="Close table editor">&times;</button>
+            </div>
+            <div class="table-editor-tabs" role="tablist" aria-label="Table editor sections">
+                <button type="button" class="table-editor-tab active" role="tab" aria-selected="true" data-editor-tab="columns">Columns and form fields</button>
+                <button type="button" class="table-editor-tab" role="tab" aria-selected="false" data-editor-tab="rows">Rows</button>
+            </div>
+            <div class="table-editor-body">
+                <section class="table-editor-panel" data-editor-panel="columns">
+                    <p class="table-editor-help">Choose which columns appear, where attachments are allowed, and which headers offer value filters.</p>
+                    <div id="tableEditorColumns" class="table-editor-list" aria-live="polite"></div>
+                </section>
+                <section class="table-editor-panel" data-editor-panel="rows" hidden>
+                    <div class="table-editor-row-tools">
+                        <input type="search" id="tableEditorRowSearch" placeholder="Search records">
+                        <button type="button" class="btn-secondary" id="hideSelectedRows">Hide selected</button>
+                        <button type="button" class="btn-secondary" id="showSelectedRows">Show selected</button>
+                        <button type="button" class="btn-danger" id="deleteSelectedRows">Delete selected</button>
+                    </div>
+                    <p class="table-editor-help">Hidden records stay in the database and can be shown again. Deleted records go to the Recycle Bin.</p>
+                    <div id="tableEditorRows" class="table-editor-list table-editor-row-list" aria-live="polite"></div>
+                </section>
+            </div>
+            <div class="modal-actions table-editor-actions">
+                <span id="tableEditorStatus" role="status" aria-live="polite"></span>
+                <button type="button" class="btn-secondary" id="doneTableEditor">Done</button>
+            </div>
+        </section>
+    </div>
+
+    <div id="confirmActionModal" class="modal-overlay confirm-modal-specific-overlay">
+        <div class="modal-content confirm-modal-specific-content" style="max-width: 450px;">
+            <div class="modal-header confirm-modal-specific-header">
+                <h2 id="confirmModalTitle">Confirm Action</h2>
+                <button type="button" class="close-modal-btn" id="confirmModalCloseX">&times;</button>
+            </div>
+            <div class="modal-body confirm-modal-specific-body" style="padding: 20px; font-size: 14px; color: #334155; line-height: 1.5;">
+                <p id="confirmModalMessage">Are you sure you want to proceed with this action?</p>
+            </div>
+            <div class="modal-actions confirm-modal-specific-actions">
+                <button type="button" class="btn-secondary" id="confirmModalCancelBtn">No, Cancel</button>
+                <button type="button" class="btn-primary" id="confirmModalProceedBtn" style="background: #ef4444; color: #fff;">Yes, Delete</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="./table.js?v=20261013-columnfilters3" defer></script>
+<script src="./table-editor.js?v=20261013-columnfilters3" defer></script>
+<script src="./delete.js" defer></script>
+<script src="./import-export.js?v=20261012-undo1" defer></script>
+
+
+</body>
+</html>

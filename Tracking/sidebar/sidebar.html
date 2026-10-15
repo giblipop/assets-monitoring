@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style data-fixed-zoom>html,body{touch-action:pan-x pan-y}@media(max-width:760px){input,select,textarea{font-size:16px!important}}</style>
+  <title>HDJV Assets Inventory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./ai-chat.css?v=20261007-hdjv-launcher2">
+  <link rel="stylesheet" href="./employee-issue.css?v=20261012-asset-search2">
+  <script src="https://unpkg.com/lucide@latest"></script>
+<style>
+
+:root {
+    --hyundai-blue: #0b1f3a;          /* deep navy */
+    --hyundai-blue-light: #163a6b;    /* hover navy */
+    --bg-main: #0a1625;               /* page background */
+    --sidebar-bg: #0f223a;            /* sidebar bg */
+    --card-bg: #132a46;               /* cards / sections */
+    
+    --text-primary: #e5e7eb;          /* main text */
+    --text-secondary: #9ca3af;        /* muted text */
+    
+    --border: #243b55;                /* subtle border */
+    
+    --success: #22c55e;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+
+    --shadow: 0 2px 10px rgba(0,0,0,.4);
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', "Segoe UI", sans-serif;
+}
+
+body {
+   background: var(--bg-main);
+    color: var(--text-primary);
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ===== MOBILE HEADER ===== */
+.mobile-header {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background: var(--bg-main);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    padding: 0 20px;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+}
+
+.menu-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.mobile-header .brand-name {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 240px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+    z-index: 999;
+}
+
+/* Brand Grid System Alignment */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 4px 10px 22px 10px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;  
+    height: 28px; 
+    flex-shrink: 0;
+}
+
+.brand-logo-img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.brand-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+/* Navigation */
+.nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0;
+}
+
+.sidebar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all .15s ease;
+    min-height: 40px;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.nav-item-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-link:hover {
+    background: #162f4f;
+    color: #ffffff;
+}
+
+.nav-link.active {
+    background: linear-gradient(135deg, #eaf3ff 0%, #dfeeff 100%);
+    color: var(--hyundai-blue);
+    font-weight: 700;
+    border-color: rgba(20, 87, 175, 0.18);
+    box-shadow: inset 0 0 0 1px rgba(20, 87, 175, 0.08);
+}
+
+.nav-link i {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* ===== DROPDOWN MANAGEMENT ===== */
+.dropdown-chevron {
+    transition: transform 0.2s ease;
+}
+
+.dropdown-container.open .dropdown-chevron {
+    transform: rotate(90deg);
+}
+
+.dropdown-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease-out;
+    list-style: none;
+    padding-left: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+.dropdown-container.open .dropdown-menu {
+    max-height: 200px; /* Adjust if needed */
+    transition: max-height 0.25s ease-in;
+}
+
+.sub-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all .15s ease;
+}
+
+.sub-nav-link:hover {
+    background: #162f4f;
+    color: #fff;
+}
+
+.sub-nav-link.active {
+    background: var(--hyundai-blue-light);
+    color: #fff;
+    font-weight: 600;
+}
+
+.sub-nav-link i {
+    width: 16px;
+    height: 16px;
+}
+
+/* Footer Profile */
+.profile-footer {
+    border-top: 1px solid #f1f5f9;
+    padding: 16px 4px 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    display: grid;
+    place-items: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #1d426b;
+    color: #dbeafe;
+}
+
+.avatar svg {
+    width: 19px;
+    height: 19px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.user-name {
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-email {
+    overflow: hidden;
+    font-size: 11px;
+    color: #94a3b8;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Main Content Wrapper */
+.main-content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    height: 100vh;
+    background: #f8fafc;
+    overflow: hidden; 
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== OVERLAY ===== */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.3);
+    z-index: 998;
+}
+
+.sidebar-overlay.show {
+    display: block;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+    .mobile-header {
+        display: flex;
+    }
+
+    .sidebar {
+        top: 65px;
+        transform: translateX(-100%);
+        transition: .3s ease;
+        height: calc(100vh - 65px);
+        width: 240px;
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        width: 100%;
+        margin-left: 0;
+        padding-top: 65px;
+    }
+}
+/* Logout confirmation modal (minimalist) */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10050;
+    padding: 16px;
+    background: rgba(15,23,42,0.48);
+    backdrop-filter: blur(3px);
+}
+.modal[aria-hidden="false"], .modal.active { display: flex; }
+.modal-card {
+    width: min(420px, 100%);
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 20px 50px rgba(15,23,42,0.24);
+    color: var(--text-primary);
+    text-align: left;
+}
+.modal-card h3 { margin-bottom: 6px; font-size: 16px; color: #0f172a; }
+.modal-card p { margin-bottom: 14px; color: #64748b; font-size: 13px; }
+.modal-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.btn { min-height: 40px; padding: 8px 12px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; }
+.btn-cancel { background: #fff; color: #475569; border: 1px solid #cbd5e1; }
+.btn-confirm { background: #0f172a; color: #fff; }
+.btn-confirm:hover { filter: brightness(0.97); }
+.btn-cancel:hover { background: #f8fafc; }
+@media (max-width: 480px) {
+    .modal-actions { flex-direction: column-reverse; }
+    .modal-actions .btn { width: 100%; min-height: 44px; }
+}
+.database-health-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    background: rgba(15, 23, 42, .62);
+    backdrop-filter: blur(3px);
+}
+.database-health-modal[hidden] { display: none; }
+.database-health-card {
+    width: min(460px, 100%);
+    padding: 23px;
+    color: #26384b;
+    background: #fff;
+    border: 1px solid #f1c5bd;
+    border-radius: 16px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .3);
+}
+.database-health-card h2 { margin: 0 0 8px; color: #9f241b; font-size: 19px; }
+.database-health-card p { margin: 0 0 16px; color: #5d6c7d; font-size: 13px; line-height: 1.55; }
+.database-health-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.database-health-actions button { min-height: 40px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; font: inherit; font-size: 12px; font-weight: 700; }
+.database-health-open { color: #fff; background: #174ea6; border-color: #174ea6 !important; }
+@media (max-width: 480px) {
+    .database-health-actions { flex-direction: column-reverse; }
+    .database-health-actions button { width: 100%; min-height: 44px; }
+}
+</style>
+<link rel="stylesheet" href="../style/modern-ui.css?v=20261013-darkblue4">
+<script src="./ui-theme.js?v=20261012-theme3"></script>
+<script src="./ui-dialog.js?v=20261012-modal-theme3"></script>
+</head>
+<body>
+
+  <header class="mobile-header">
+    <button class="sidebar-logo-toggle mobile-brand-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
+      <img src="../icon/HDJVlogo.png" alt="" class="brand-logo-img">
+      <span class="brand-name">HDJV ASSETS</span>
+    </button>
+  </header>
+
+  <div class="sidebar-overlay" id="overlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div>
+      <div class="brand">
+        <button class="sidebar-logo-toggle brand-logo" id="sidebarLogoToggle" type="button" aria-label="Collapse sidebar" aria-pressed="false" title="Collapse sidebar">
+          <img src="../icon/HDJVlogo.png" alt="" class="brand-logo-img">
+        </button>
+        <div class="brand-tools">
+          <span class="brand-name">HDJV ASSETS</span>
+        </div>
+      </div>
+
+      <nav style="display: flex; flex-direction: column; gap: 4px;">
+        <ul class="nav-list">
+            <li>
+                <a href="#" class="nav-link active" data-table="dashboard" aria-label="Dashboard" title="Dashboard">
+                    <div class="nav-item-left">
+                        <i data-lucide="layout-dashboard"></i>
+                        <span>Dashboard</span>
+                    </div>
+                </a>
+            </li>
+        </ul>
+        
+        <!-- Dynamic DB Tables Loaded Here -->
+        <div id="dynamicSidebar"></div>
+
+        <!-- Administrative Settings Dropdown Section -->
+        <div class="dropdown-container" id="settingsDropdown">
+            <a class="nav-link" id="settingsToggle" aria-label="System Control" title="System Control" aria-expanded="false" aria-controls="systemControlMenu">
+                <div class="nav-item-left">
+                    <i data-lucide="settings"></i>
+                    <span>System Control</span>
+                </div>
+                <i data-lucide="chevron-right" class="dropdown-chevron"></i>
+            </a>
+            <ul class="dropdown-menu" id="systemControlMenu">
+                <li>
+                    <a href="../inventory/settings/manage_navigation.html" class="sub-nav-link" data-table="manage-navigation" aria-label="Manage Navigation" title="Manage Navigation">
+                        <i data-lucide="sliders"></i>
+                        <span>Manage Navigation</span>
+                    </a>
+                    
+                </li>
+                <li>
+                    <a href="../inventory/settings/profile.html" class="sub-nav-link" data-table="profile" aria-label="Profile and Workspaces" title="Profile &amp; Workspaces">
+                        <i data-lucide="user-round"></i>
+                        <span>Profile &amp; Workspaces</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../inventory/settings/recycle_bin.html" class="sub-nav-link" data-table="recycle-bin" aria-label="Recycle Bin" title="Recycle Bin">
+                        <i data-lucide="trash-2"></i>
+                        <span>Recycle Bin</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="../inventory/settings/faq.html" class="sub-nav-link" data-table="system-faq" aria-label="FAQ and User Guide" title="FAQ &amp; User Guide">
+                        <i data-lucide="circle-help"></i>
+                        <span>FAQ &amp; User Guide</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="profile-footer">
+      <div class="avatar" aria-hidden="true"><i data-lucide="user-round"></i></div>
+      <div class="user-info">
+        <span class="user-name" id="sidebarUserName">Loading profile…</span>
+        <span class="user-email" id="sidebarUsername"></span>
+      </div>
+        <a href="#" id="logoutBtn" data-target="../../page/login.html" class="nav-link" style="padding: 6px; border-radius: 8px;" title="Logout"><i data-lucide="log-out"></i></a>
+    </div>
+        <!-- Logout Confirmation Modal -->
+        <div class="modal" id="logoutModal" aria-hidden="true">
+            <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
+                <h3 id="logoutTitle">Confirm Logout</h3>
+                <p>Are you sure you want to log out?</p>
+                <div class="modal-actions">
+                    <button class="btn btn-cancel" id="cancelLogout">Cancel</button>
+                    <button class="btn btn-confirm" id="confirmLogout">Logout</button>
+                </div>
+            </div>
+        </div>
+  </aside>
+
+  <main class="main-content">
+    <iframe id="contentFrame" src="" style="width:100%; height:100%; border:none; background:white;"></iframe>
+  </main>
+
+  <section class="employee-issue-overlay" id="employeeIssueModal" hidden aria-label="Employee asset management">
+    <div class="employee-issue-dialog" role="dialog" aria-modal="true" aria-labelledby="employeeIssueTitle">
+      <header class="employee-issue-header">
+        <div>
+          <p class="employee-issue-eyebrow">ASSET ASSIGNMENTS</p>
+          <h2 id="employeeIssueTitle">Find or issue assets</h2>
+          <p>Return assigned equipment or issue inventory to a new employee.</p>
+        </div>
+        <button class="employee-issue-close" id="employeeIssueClose" type="button" aria-label="Close employee asset lookup">×</button>
+      </header>
+      <div class="employee-issue-content">
+        <div class="employee-issue-tabs" role="tablist" aria-label="Asset assignment task">
+          <button class="employee-issue-tab active" id="returnAssetsTab" type="button" role="tab" aria-selected="true" aria-controls="returnAssetsPane">Return assets</button>
+          <button class="employee-issue-tab" id="issueAssetsTab" type="button" role="tab" aria-selected="false" aria-controls="issueAssetsPane">Issue assets</button>
+        </div>
+        <section id="returnAssetsPane" class="employee-issue-pane" role="tabpanel" aria-labelledby="returnAssetsTab">
+          <label class="employee-issue-label" for="employeeIssueName">Find an employee with assigned assets</label>
+          <input class="employee-issue-input" id="employeeIssueName" type="search" maxlength="150" autocomplete="off" placeholder="Type an employee name">
+          <div class="employee-issue-results" id="employeeIssueResults" role="listbox" aria-label="Matching employees"></div>
+          <section class="employee-issued-section" id="employeeIssuedSection" hidden>
+            <div class="employee-issued-heading">
+              <div><h3 id="employeeIssuedName">Assigned assets</h3><p id="employeeIssuedSummary"></p></div>
+              <div class="return-list-actions">
+                <button class="employee-issue-button secondary compact" id="selectAllReturns" type="button">Select all</button>
+                <button class="employee-issue-button secondary compact" id="clearReturnSelection" type="button">Clear</button>
+              </div>
+            </div>
+            <div class="employee-issued-table-wrap">
+              <table class="employee-issued-table">
+                <thead><tr><th></th><th>Module</th><th>Asset number</th><th>Model</th><th>Serial number</th><th>Status</th><th>Issue date</th><th>Time used</th><th>Last user</th></tr></thead>
+                <tbody id="employeeIssuedRows"></tbody>
+              </table>
+            </div>
+            <div class="return-footer">
+              <span id="returnSelectionCount">0 selected</span>
+              <button class="employee-issue-button primary" id="returnSelectedAssets" type="button" disabled>Return selected assets</button>
+            </div>
+          </section>
+          <p class="employee-issue-notice" id="employeeIssueNotice" role="status"></p>
+        </section>
+        <section id="issueAssetsPane" class="employee-issue-pane" role="tabpanel" aria-labelledby="issueAssetsTab" hidden>
+          <div class="issue-employee-heading"><h3>New employee details</h3><p>Enter the employee information once. It will be applied to each selected asset where available.</p></div>
+          <div class="employee-issue-fields">
+            <label><span>Full name *</span><input class="employee-issue-input" id="newEmployeeName" maxlength="150" autocomplete="off" required></label>
+            <label><span>Department</span><input class="employee-issue-input" id="newEmployeeDepartment" maxlength="150"></label>
+            <label><span>Work area / site</span><input class="employee-issue-input" id="newEmployeeWorkArea" maxlength="150"></label>
+            <label><span>Job trade</span><input class="employee-issue-input" id="newEmployeeJobTrade" maxlength="150"></label>
+            <label><span>Nationality</span><input class="employee-issue-input" id="newEmployeeNationality" maxlength="100"></label>
+          </div>
+          <div class="employee-issue-actions">
+            <button class="employee-issue-button primary" id="employeeIssueStart" type="button" disabled>Choose assets</button>
+          </div>
+          <p class="employee-issue-notice" id="newEmployeeNotice" role="status"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="employee-issue-overlay" id="assetIssueModal" hidden aria-label="Select assets to issue">
+    <div class="employee-issue-dialog asset-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="assetIssueTitle">
+      <header class="employee-issue-header">
+        <div>
+          <p class="employee-issue-eyebrow">ISSUE TO <span id="assetIssueEmployee"></span></p>
+          <h2 id="assetIssueTitle">Select available assets</h2>
+          <p>Choose an asset type and search its number. Earlier asset lists collapse when you move on, and your selections stay saved.</p>
+        </div>
+        <button class="employee-issue-close" id="assetIssueClose" type="button" aria-label="Close asset selection">×</button>
+      </header>
+      <div class="employee-issue-content asset-picker-content">
+        <div class="asset-module-picker" id="assetModulePicker" aria-label="Inventory modules"></div>
+        <p class="asset-picker-hint">Available assets are records marked In Stock or Available. Search by asset number, record ID, model, or serial number. Load more results to browse beyond the first 100 matches; issue up to 100 assets at a time.</p>
+        <div class="asset-module-panels" id="assetModulePanels"></div>
+        <div class="asset-picker-footer">
+          <span id="assetSelectionCount">0 assets selected</span>
+          <div>
+            <button class="employee-issue-button secondary" id="assetIssueCancel" type="button">Back</button>
+            <button class="employee-issue-button primary" id="assetIssueConfirm" type="button" disabled>Confirm issuance</button>
+          </div>
+        </div>
+        <p class="employee-issue-notice" id="assetIssueNotice" role="status"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ai-chat" id="aiChat" aria-label="HDJV Assistant">
+    <button class="ai-chat-launcher" id="aiChatLauncher" type="button" aria-label="Open HDJV Assistant" aria-expanded="false" aria-controls="aiChatPanel">
+      <span class="ai-chat-launcher-icon"><img src="../icon/HDJVlogo.png" alt=""></span>
+      <span class="ai-chat-launcher-label">HDJV Assistant</span>
+      <span class="ai-chat-launcher-status" aria-hidden="true"></span>
+    </button>
+    <div class="ai-chat-panel" id="aiChatPanel" role="dialog" aria-modal="false" aria-labelledby="aiChatTitle" hidden>
+      <header class="ai-chat-header">
+        <div class="ai-chat-brand">
+          <span class="ai-chat-avatar"><img src="../icon/HDJVlogo.png" alt="HDJV logo"></span>
+          <div>
+            <h2 id="aiChatTitle">HDJV Assistant</h2>
+            <p><span class="ai-chat-online-dot"></span> Local · Private to your account</p>
+          </div>
+        </div>
+        <div class="ai-chat-header-actions">
+          <button class="ai-chat-icon-button" id="aiChatNew" type="button" aria-label="Start a new chat" title="New chat">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
+          <button class="ai-chat-icon-button" id="aiChatClose" type="button" aria-label="Close chat" title="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </header>
+      <div class="ai-chat-disclaimer">Read-only checks · No external AI service · Your account only</div>
+      <div class="ai-chat-messages" id="aiChatMessages" role="log" aria-live="polite" aria-relevant="additions text">
+        <div class="ai-chat-welcome" id="aiChatWelcome">
+          <span class="ai-chat-welcome-icon"><img src="../icon/HDJVlogo.png" alt="HDJV logo"></span>
+          <h3>Hi! I’m your HDJV Assistant.</h3>
+          <p>Ask me about the system, its features, your inventory, or your activity.</p>
+          <div class="ai-chat-suggestions">
+            <button type="button" data-prompt="Summarize my inventory">Summarize my inventory</button>
+            <button type="button" data-prompt="Check my inventory for missing data and duplicates">Check for data problems</button>
+            <button type="button" data-prompt="Show me the status breakdown for my assets">Show asset status breakdown</button>
+          </div>
+        </div>
+      </div>
+      <form class="ai-chat-composer" id="aiChatForm">
+        <label class="ai-chat-sr-only" for="aiChatInput">Message the AI assistant</label>
+        <textarea id="aiChatInput" rows="1" maxlength="2000" placeholder="Ask about the system or your data..." required></textarea>
+        <div class="ai-chat-composer-footer">
+          <span id="aiChatCharCount">0 / 2000</span>
+          <button class="ai-chat-send" id="aiChatSend" type="submit" aria-label="Send message">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="database-health-modal" id="databaseHealthModal" hidden role="alertdialog" aria-modal="true" aria-labelledby="databaseHealthTitle" aria-describedby="databaseHealthMessage">
+    <div class="database-health-card">
+      <h2 id="databaseHealthTitle">Database connection problem</h2>
+      <p id="databaseHealthMessage">The system cannot reach MySQL. Check that the XAMPP MySQL service is running, then try again.</p>
+      <div class="database-health-actions">
+        <button type="button" id="dismissDatabaseHealth">Dismiss</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="./local-assistant.js?v=20261007-hdjv-assistant1" defer></script>
+<script src="./employee-issue.js?v=20261012-modal-undo1" defer></script>
+<script src="./language.js?v=20261013-language3" defer></script>
+  <script src="./ui-auto-update.js?v=20261010-autoupdate1" defer></script>
+<script>
+const iconMapping = {
+    'dashboard': 'layout-dashboard',
+    'laptop': 'laptop',
+    'computer': 'monitor',
+    'desktop': 'monitor',
+    'keyboard': 'keyboard',
+    'mouse': 'mouse',
+    'printer': 'printer',
+    'server': 'server',
+    'network': 'wifi',
+    'phone': 'tablet-smartphone',
+    'mobile': 'smartphone',
+    'hardware': 'cpu',
+    'software': 'code',
+    'user': 'users',
+    'employee': 'user-check',
+    'setting': 'settings',
+    'history': 'history',
+    'log': 'file-text'
+};
+
+function getDynamicIcon(tableName) {
+    const lowerName = tableName.toLowerCase();
+    for (const key in iconMapping) {
+        if (lowerName.includes(key)) {
+            return iconMapping[key];
+        }
+    }
+    return null;
+}
+
+// Load page into iframe
+function loadPage(tableName) {
+    const frame = document.getElementById("contentFrame");
+    if(tableName === 'dashboard') {
+        frame.src = `../inventory/dashboard/dashboard.html`; 
+    } else if(tableName === 'manage-navigation') {
+        // Point this to your new file location where you can edit buttons
+        frame.src = `../inventory/settings/manage_navigation.html`;
+    } else if(tableName === 'recycle-bin') {
+        frame.src = `../inventory/settings/recycle_bin.html`;
+    } else if(tableName === 'profile') {
+        frame.src = `../inventory/settings/profile.html`;
+    } else if(tableName === 'system-faq') {
+        frame.src = `../inventory/settings/faq.html`;
+    } else {
+        frame.src = `../inventory/settings/format/module.php?table=${encodeURIComponent(tableName)}`;
+    }
+    localStorage.setItem("activeTable", tableName);
+}
+
+const languageFrame = document.getElementById('contentFrame');
+document.documentElement.style.touchAction = 'pan-x pan-y';
+document.body.style.touchAction = 'pan-x pan-y';
+languageFrame?.addEventListener('load', () => {
+    const frameDocument = languageFrame.contentDocument;
+    if (frameDocument && frameDocument.documentElement && frameDocument.head) {
+        let viewport = frameDocument.head.querySelector('meta[name="viewport"]');
+        if (!viewport) {
+            viewport = frameDocument.createElement('meta');
+            viewport.name = 'viewport';
+            frameDocument.head.appendChild(viewport);
+        }
+        viewport.content = 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no';
+        frameDocument.documentElement.style.touchAction = 'pan-x pan-y';
+        if (frameDocument.body) frameDocument.body.style.touchAction = 'pan-x pan-y';
+    }
+    window.AssetMonitorLanguage?.attachFrame(languageFrame);
+});
+window.addEventListener('message', event => {
+    if (event.origin !== window.location.origin || event.source !== languageFrame?.contentWindow) return;
+    if (event.data?.type === 'asset-monitor-language-change' && ['en','ko'].includes(event.data.language)) {
+        window.AssetMonitorLanguage?.set(event.data.language);
+    } else if (event.data?.type === 'asset-monitor-assistant-visibility-change' && typeof event.data.visible === 'boolean') {
+        setAssistantVisibility(event.data.visible);
+    } else if (event.data?.type === 'inventory-open-module' && typeof event.data.table === 'string') {
+        setActiveUI(event.data.table);
+    }
+});
+
+function setAssistantVisibility(visible) {
+    const assistant = document.getElementById('aiChat');
+    const panel = document.getElementById('aiChatPanel');
+    const launcher = document.getElementById('aiChatLauncher');
+    if (!assistant || !panel || !launcher) return;
+    assistant.hidden = !visible;
+    if (!visible) {
+        panel.hidden = true;
+        launcher.setAttribute('aria-expanded', 'false');
+    }
+}
+
+async function loadAssistantVisibility() {
+    try {
+        const response = await fetch('../inventory/settings/link_button.php?get_assistant_visibility=1', {
+            credentials: 'same-origin',
+            cache: 'no-store'
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success || typeof result.visible !== 'boolean') {
+            throw new Error(result.message || `Assistant visibility could not be loaded (${response.status}).`);
+        }
+        setAssistantVisibility(result.visible);
+    } catch (error) {
+        console.error('Could not load HDJV Assistant visibility.', error);
+    }
+}
+
+function formatName(name) {
+    return name
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+// Load sidebar menu
+async function loadSidebar() {
+    try {
+        const response = await fetch("get_sidebar.php");
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+
+        const data = await response.json();
+        const container = document.getElementById("dynamicSidebar");
+        container.innerHTML = "";
+
+        const ul = document.createElement("ul");
+        ul.className = "nav-list";
+
+        data.forEach((item) => {
+            const li = document.createElement("li");
+            const chosenIcon = getDynamicIcon(item.table_name) || item.icon || "folder";
+            const sidebarName = item.display_name || formatName(item.table_name);
+            const link = document.createElement("a");
+            link.href = "#";
+            link.className = "nav-link";
+            link.dataset.table = item.table_name;
+            link.setAttribute("aria-label", sidebarName);
+            link.title = sidebarName;
+            const left = document.createElement("div");
+            left.className = "nav-item-left";
+            const icon = document.createElement("i");
+            icon.setAttribute("data-lucide", chosenIcon);
+            const label = document.createElement("span");
+            label.textContent = sidebarName;
+            left.append(icon, label);
+            link.appendChild(left);
+            li.appendChild(link);
+            ul.appendChild(li);
+        });
+
+        container.appendChild(ul);
+        lucide.createIcons();
+
+        // Handle active UI state persistence
+        const savedTable = localStorage.getItem("activeTable") || 'dashboard';
+        setActiveUI(savedTable);
+
+    } catch (error) {
+        console.error("Sidebar Error:", error);
+        document.getElementById("dynamicSidebar").innerHTML = `
+            <div style="padding:15px; color:var(--danger); font-size:12px;">
+                Failed to load sidebar inventory menu.
+            </div>
+        `;
+        // Make sure UI still responds to default fallbacks even on fetch failure
+        const savedTable = localStorage.getItem("activeTable") || 'dashboard';
+        setActiveUI(savedTable);
+    }
+}
+
+function setActiveUI(tableName) {
+    const safeTable = tableName || 'dashboard';
+    loadPage(safeTable);
+
+    document.querySelectorAll(".nav-link, .sub-nav-link").forEach(link => link.classList.remove("active"));
+
+    const activeLink = document.querySelector(`[data-table="${CSS.escape(safeTable)}"]`);
+    if (activeLink) {
+        activeLink.classList.add("active");
+    }
+
+    const settingsDropdown = document.getElementById("settingsDropdown");
+    const isSettingsPage = safeTable === 'manage-navigation' || safeTable === 'recycle-bin' || safeTable === 'profile' || safeTable === 'system-faq';
+    settingsDropdown?.classList.toggle('open', isSettingsPage);
+    document.getElementById('settingsToggle')?.setAttribute('aria-expanded', String(isSettingsPage));
+}
+
+/* Toggle Dropdown Interaction */
+document.getElementById("settingsToggle").addEventListener("click", function(e) {
+    e.preventDefault();
+    const isOpen = document.getElementById("settingsDropdown").classList.toggle("open");
+    this.setAttribute('aria-expanded', String(isOpen));
+});
+
+// Sidebar click handling (Event Delegation Layout Strategy)
+document.addEventListener("click", function (e) {
+    const link = e.target.closest("[data-table]");
+    if (!link || link.id === 'settingsToggle') return;
+    e.preventDefault();
+
+    const tableName = link.dataset.table;
+    setActiveUI(tableName);
+
+    if (document.getElementById("sidebar")?.classList.contains("show")) {
+        document.getElementById("sidebar")?.classList.remove("show");
+        document.getElementById("overlay")?.classList.remove("show");
+        document.querySelector('.mobile-brand-toggle')?.setAttribute('aria-expanded', 'false');
+        document.querySelector('.mobile-brand-toggle')?.setAttribute('aria-label', 'Open navigation menu');
+    }
+});
+
+// The HDJV logo is the sidebar control on both desktop and mobile.
+(function initializeSidebarLogoToggle() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const desktopLogo = document.getElementById('sidebarLogoToggle');
+    const mobileLogo = document.querySelector('.mobile-brand-toggle');
+    if (!sidebar || !desktopLogo || !mobileLogo) return;
+
+    const mobileQuery = window.matchMedia('(max-width: 768px)');
+    const setMobileOpen = open => {
+        sidebar.classList.toggle('show', open);
+        overlay?.classList.toggle('show', open);
+        mobileLogo.setAttribute('aria-expanded', String(open));
+        mobileLogo.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+    };
+    const setDesktopCollapsed = collapsed => {
+        sidebar.classList.toggle('is-collapsed', collapsed);
+        desktopLogo.setAttribute('aria-pressed', String(collapsed));
+        desktopLogo.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+        desktopLogo.title = collapsed ? 'Expand sidebar' : 'Collapse sidebar';
+    };
+
+    setDesktopCollapsed(localStorage.getItem('assetSidebarCollapsed') === 'true' && !mobileQuery.matches);
+    desktopLogo.addEventListener('click', () => {
+        if (mobileQuery.matches) {
+            setMobileOpen(!sidebar.classList.contains('show'));
+            return;
+        }
+        const collapsed = !sidebar.classList.contains('is-collapsed');
+        localStorage.setItem('assetSidebarCollapsed', String(collapsed));
+        setDesktopCollapsed(collapsed);
+    });
+    mobileLogo.addEventListener('click', () => setMobileOpen(!sidebar.classList.contains('show')));
+    mobileQuery.addEventListener('change', event => {
+        sidebar.classList.remove('show');
+        overlay?.classList.remove('show');
+        mobileLogo.setAttribute('aria-expanded', 'false');
+        mobileLogo.setAttribute('aria-label', 'Open navigation menu');
+        setDesktopCollapsed(localStorage.getItem('assetSidebarCollapsed') === 'true' && !event.matches);
+    });
+})();
+
+document.getElementById('overlay')?.addEventListener('click', function() {
+    document.getElementById("sidebar")?.classList.remove("show");
+    this.classList.remove("show");
+    document.querySelector('.mobile-brand-toggle')?.setAttribute('aria-expanded', 'false');
+    document.querySelector('.mobile-brand-toggle')?.setAttribute('aria-label', 'Open navigation menu');
+});
+
+// Initialize Framework Layout
+document.addEventListener("DOMContentLoaded", () => {
+    loadSidebar();
+    loadAssistantVisibility();
+});
+
+// Logout confirmation modal handlers
+(function(){
+    // Static dashboard pages must still ask the PHP session before showing protected content.
+    let lastInput = Date.now();
+    ['pointerdown','keydown','touchstart','mousemove'].forEach(type => document.addEventListener(type, () => { lastInput = Date.now(); }, {passive:true}));
+    const verifySession = () => fetch('../../page/auth_api.php?action=me', {credentials:'same-origin', cache:'no-store'})
+        .then(r => {
+            if (!r.ok) throw new Error(`Session check failed: ${r.status}`);
+            return r.json();
+        })
+        .then(result => {
+            if (!result.success || !result.user) throw new Error('No signed-in user was returned.');
+            window.AssetMonitorLanguage?.set(result.user.LanguagePreference === 'ko' ? 'ko' : 'en');
+            const firstName = String(result.user.FirstName || '').trim();
+            const lastName = String(result.user.LastName || '').trim();
+            document.getElementById('sidebarUserName').textContent = [firstName, lastName].filter(Boolean).join(' ') || 'User profile';
+            document.getElementById('sidebarUsername').textContent = result.user.Username || '';
+        })
+        .catch(() => window.location.replace('../../page/login.html'));
+    verifySession();
+    window.setInterval(() => {
+        if (Date.now() - lastInput > 20 * 60 * 1000) { endSession('../../page/login.html'); return; }
+        verifySession();
+    }, 60 * 1000);
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutModal = document.getElementById('logoutModal');
+    const cancelBtn = document.getElementById('cancelLogout');
+    const confirmBtn = document.getElementById('confirmLogout');
+
+    if(!logoutBtn || !logoutModal) return;
+
+    async function endSession(target){
+        try {
+            const csrfResponse = await fetch('../../page/auth_api.php?action=csrf', {credentials:'same-origin', cache:'no-store'});
+            if (!csrfResponse.ok) throw new Error(`CSRF request failed: ${csrfResponse.status}`);
+            const csrf = await csrfResponse.json();
+            const response = await fetch('../../page/auth_api.php?action=logout', {
+                method:'POST',
+                credentials:'same-origin',
+                headers:{'Content-Type':'application/json','X-CSRF-Token':csrf.csrf},
+                body:'{}'
+            });
+            if (!response.ok) throw new Error(`Logout request failed: ${response.status}`);
+        } catch(error) {
+            console.error('Could not record the logout request:', error);
+        } finally {
+            window.location.href = target;
+        }
+    }
+
+    function showModal(){
+        logoutModal.setAttribute('aria-hidden','false');
+        logoutModal.classList.add('active');
+    }
+    function hideModal(){
+        logoutModal.setAttribute('aria-hidden','true');
+        logoutModal.classList.remove('active');
+    }
+
+    logoutBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        showModal();
+    });
+
+    cancelBtn?.addEventListener('click', function(){ hideModal(); });
+
+    confirmBtn?.addEventListener('click', function(){
+        const target = logoutBtn.dataset?.target || '../../page/login.html';
+        endSession(target);
+    });
+
+    // Close when clicking outside modal card
+    logoutModal.addEventListener('click', function(e){
+        if(e.target === logoutModal) hideModal();
+    });
+
+    // Close on Escape
+    document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape') hideModal();
+    });
+})();
+(() => {
+    const modal = document.getElementById('databaseHealthModal');
+    if (!modal) return;
+    const healthUrl = '../connector/database_backup_api.php?action=health';
+    const dismissButton = document.getElementById('dismissDatabaseHealth');
+    const title = document.getElementById('databaseHealthTitle');
+    const message = document.getElementById('databaseHealthMessage');
+    let outageAlertDismissed = false;
+    let checking = false;
+
+    async function checkDatabaseHealth() {
+        if (checking) return;
+        checking = true;
+        try {
+            const response = await fetch(healthUrl, { cache: 'no-store' });
+            const result = await response.json();
+            if (!response.ok || result.database_healthy !== true) {
+                title.textContent = 'Database connection problem';
+                message.textContent = 'The system cannot reach MySQL or required system databases. Check that the XAMPP MySQL service is running.';
+                if (!outageAlertDismissed) modal.hidden = false;
+            } else {
+                outageAlertDismissed = false;
+                modal.hidden = true;
+            }
+        } catch {
+            if (!outageAlertDismissed) modal.hidden = false;
+        } finally {
+            checking = false;
+        }
+    }
+
+    dismissButton.addEventListener('click', () => {
+        outageAlertDismissed = true;
+        modal.hidden = true;
+    });
+    checkDatabaseHealth();
+    window.setInterval(checkDatabaseHealth, 30000);
+})();
+</script>
+</body>
+</html>

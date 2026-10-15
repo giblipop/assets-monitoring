@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style data-fixed-zoom>html,body{touch-action:pan-x pan-y}@media(max-width:760px){input,select,textarea{font-size:16px!important}}</style><title>Sign in | HDEC-Dongah Inventory</title>
+<script src="../Tracking/sidebar/language.js?v=20261013-language3" defer></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+<style>
+:root{
+    --text:#ffffff;
+    --muted:rgba(255,255,255,.75);
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    overflow-x:hidden;
+    font-family:Inter,Segoe UI,sans-serif;
+    background:#000;
+    color:var(--text);
+    position:relative;
+}
+
+/* VIDEO BACKGROUND */
+
+.bg-video{
+    position:fixed;
+   inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    z-index:-3;
+}
+
+.video-overlay{
+    position:fixed;
+    inset:0;
+
+    background:
+    linear-gradient(
+        130deg,
+        rgba(0,0,0,.65),
+        rgba(8,25,51,.65)
+    );
+
+    z-index:-2;
+}
+
+/* PAGE LAYOUT */
+
+.shell{
+    min-height:100vh;
+
+   display:grid;
+
+    grid-template-columns:
+        1fr
+        minmax(430px,550px);
+
+    align-items:center;
+
+    max-width:1600px;
+
+    margin:auto;
+
+    padding:40px;
+
+    gap:80px;
+}
+
+/* HERO */
+
+.hero{
+    padding:20px;
+    animation:fadeUp .8s ease;
+}
+
+
+.hero::before{
+    content: "";
+
+    display: block;
+
+    width: 180px;
+    height: 180px;
+
+    margin-bottom: 30px;
+
+    background: url("./page/HDJV brand.png") no-repeat center;
+
+    background-size: contain;
+}
+
+.logo{
+    display:none;
+}
+
+.eyebrow{
+    color:rgba(119, 170, 187, 0.533);
+
+    font-size:.85rem;
+
+    font-weight:700;
+
+    letter-spacing:.2em;
+
+    text-transform:uppercase;
+}
+
+.hero h1{
+    font-size:clamp(2rem,5vw,5.5rem);
+
+    font-weight:100;
+
+    line-height:1.05;
+
+    letter-spacing:-.05em;
+
+    margin:200x 0;
+}
+
+.hero p{
+    max-width:580px;
+
+    color:rgba(255,255,255,.85);
+
+  font-size:1.15rem;
+
+    line-height:1.9;
+}
+
+/* GLASS LOGIN CARD */
+
+.cardbox{
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(24px);
+
+    -webkit-backdrop-filter:blur(24px);
+
+    border:1px solid rgba(255,255,255,.18);
+
+    border-radius:30px;
+
+    padding:45px;
+
+    box-shadow:
+        0 8px 32px rgba(0,0,0,.25),
+        0 0 60px rgba(255,255,255,.05);
+
+    animation:fadeUp .8s ease;
+}
+
+.cardbox h2{
+    color:#fff;
+
+    font-weight:800;
+
+    font-size:2rem;
+
+    letter-spacing:-.03em;
+}
+
+.sub,
+.muted{
+    color:var(--muted);
+}
+
+.sub{
+    margin:10px 0 28px;
+}
+
+/* FORMS */
+
+.form-label{
+    color:#fff;
+    font-weight:600;
+    margin-bottom:6px;
+    font-size:.9rem;
+}
+
+.form-control,
+.form-select{
+    height:54px;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.15);
+
+    color:#fff;
+
+    transition:.3s;
+}
+
+.form-control::placeholder{
+    color:rgba(255,255,255,.5);
+}
+
+.form-control:hover,
+.form-select:hover{
+    border-color:rgba(255,255,255,.35);
+}
+
+.form-control:focus,
+.form-select:focus{
+    background:rgba(255,255,255,.12);
+
+    color:#fff;
+
+    border-color:#56a8ff;
+
+    box-shadow:
+        0 0 0 .2rem rgba(86,168,255,.20);
+}
+
+.form-check-input{
+    cursor:pointer;
+}
+
+/* BUTTONS */
+
+.btn-primary{
+    height:54px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #175cd3,
+            #4ca5ff
+        );
+
+    font-weight:700;
+
+    transition:.3s;
+}
+
+.btn-primary:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(23,92,211,.35);
+}
+
+.btn-outline-secondary{
+    border-radius:14px;
+}
+
+/* LINKS */
+
+.link{
+    color:#8bc4ff;
+    text-decoration:none;
+    font-weight:600;
+}
+
+.link:hover{
+    color:#ffffff;
+    text-decoration:underline;
+}
+
+/* SMALL TEXT */
+
+.smallmuted{
+    font-size:.85rem;
+    color:var(--muted);
+}
+
+/* PROGRESS BAR */
+
+.progress{
+    height:6px;
+
+    border-radius:99px;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.15);
+
+    margin-bottom:25px;
+}
+
+.progress-bar{
+    background:
+    linear-gradient(
+        90deg,
+        #4ca5ff,
+        #7ad1ff
+    );
+}
+
+/* SIGNUP STEPS */
+
+.step{
+    display:none;
+}
+
+.step.active{
+    display:block;
+    animation:fadeUp .3s ease;
+}
+
+/* MODALS */
+
+.modal-content{
+    background:rgba(16,24,40,.88);
+
+    backdrop-filter:blur(25px);
+
+    border:1px solid rgba(255,255,255,.10);
+
+    border-radius:25px;
+
+    color:#fff;
+}
+
+.modal-header{
+    border-bottom:1px solid rgba(255,255,255,.10);
+}
+
+.modal-footer{
+    border-top:1px solid rgba(255,255,255,.10);
+}
+
+.modal-body{
+    color:#fff;
+}
+
+/* ALERTS */
+
+.alert{
+    border:none;
+    border-radius:14px;
+}
+
+/* PASSWORD BOXES */
+
+.bg-light{
+    background:rgba(255,255,255,.08)!important;
+}
+
+code{
+    color:#7bc2ff;
+}
+
+/* ANIMATION */
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:none;
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:992px){
+
+    .shell{
+        grid-template-columns:1fr;
+        gap:30px;
+        max-width:650px;
+        padding:20px;
+    }
+
+    .hero{
+        text-align:center;
+    }
+
+    .hero::before{
+        margin:0 auto 25px;
+        width:130px;
+        height:130px;
+    }
+
+    .hero h1{
+        font-size:2.8rem;
+    }
+
+    .hero p{
+        max-width:100%;
+    }
+}
+
+@media(max-width:576px){
+
+    .cardbox{
+        padding:28px;
+        border-radius:22px;
+    }
+
+    .hero h1{
+        font-size:2.2rem;
+    }
+
+    .modal-footer .btn{
+        width:100%;
+    }
+}
+</style>
+<style>
+:root{
+    color-scheme:dark;
+    --glass-ink:#f7f9fc;
+    --glass-muted:rgba(239,245,255,.74);
+    --glass-line:rgba(255,255,255,.22);
+    --glass-link:#b9dcff;
+    --glass-control:rgba(5,22,38,.32);
+    --glass-control-focus:rgba(5,22,38,.48);
+    --glass-card:linear-gradient(145deg,rgba(255,255,255,.19),rgba(255,255,255,.075));
+    --glass-overlay:linear-gradient(115deg,rgba(4,17,31,.78),rgba(8,33,53,.42) 54%,rgba(4,17,31,.68)),linear-gradient(0deg,rgba(4,17,31,.34),transparent 55%);
+}
+
+html,body{min-height:100%;background:#071a2b}
+body{position:relative;isolation:isolate;color:var(--glass-ink);font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif}
+body::before,body::after{position:fixed;z-index:-1;pointer-events:none;content:""}
+body::before{inset:-18%;background:radial-gradient(ellipse at 18% 24%,rgba(90,164,225,.19),transparent 37%),radial-gradient(ellipse at 82% 76%,rgba(81,139,192,.2),transparent 34%);filter:blur(20px)}
+.bg-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.video-overlay{position:fixed;inset:0;z-index:-1;background:var(--glass-overlay);backdrop-filter:saturate(.78)}
+.brand{position:absolute;top:24px;right:28px;z-index:2;display:flex;min-width:142px;min-height:64px;align-items:center;justify-content:center;padding:8px 14px;border:1px solid var(--glass-line);border-radius:16px;background:rgba(255,255,255,.12);box-shadow:0 12px 32px rgba(0,0,0,.14),inset 0 1px rgba(255,255,255,.18);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.brand img{display:block;width:142px;max-height:48px;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(0,0,0,.12))}
+.link:focus-visible,.form-control:focus-visible{outline:3px solid rgba(130,190,244,.72);outline-offset:3px}
+.shell{width:min(1060px,calc(100% - 40px));min-height:100vh;margin:auto;padding:76px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(350px,440px);align-items:center;gap:clamp(48px,9vw,120px)}
+.hero{max-width:510px}
+.eyebrow{color:#c5ddf5;letter-spacing:.14em;font-size:.72rem;font-weight:700}
+.hero h1{max-width:500px;margin:22px 0 18px;font-size:clamp(2.45rem,5vw,4.1rem);font-weight:650;line-height:1.05;letter-spacing:-.045em;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.13)}
+.hero p{max-width:410px;color:rgba(239,245,255,.82);font-size:1.05rem;line-height:1.75}
+.cardbox{position:relative;overflow:hidden;padding:clamp(28px,4vw,42px);border:1px solid var(--glass-line);border-radius:24px;background:var(--glass-card);box-shadow:0 24px 80px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.22);backdrop-filter:blur(26px) saturate(140%);-webkit-backdrop-filter:blur(26px) saturate(140%);animation:fadeUp .65s ease both}
+.cardbox::before{position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.65),transparent);content:""}
+.cardbox h2{margin:8px 0;font-size:1.55rem;font-weight:650;letter-spacing:-.025em;color:var(--glass-ink)}
+.cardbox .sub,.smallmuted{color:var(--glass-muted)!important}
+.cardbox .sub{margin-bottom:26px}
+.cardbox .form-label{color:var(--glass-ink);font-size:.86rem;font-weight:600}
+.cardbox .form-control{min-height:49px;padding:.7rem .9rem;border:1px solid var(--glass-line);border-radius:11px;color:var(--glass-ink);background:var(--glass-control);box-shadow:none;transition:border-color .2s,background .2s,box-shadow .2s}
+.cardbox .form-control::placeholder{color:var(--glass-muted)}
+.cardbox .form-control:hover{border-color:rgba(255,255,255,.48)}
+.cardbox .form-control:focus{border-color:rgba(169,211,255,.9);background:var(--glass-control-focus);box-shadow:0 0 0 3px rgba(125,184,245,.2)}
+.cardbox .form-check-input{border-color:rgba(255,255,255,.5);background-color:rgba(255,255,255,.15)}
+.cardbox .form-check-input:checked{border-color:#a9d3ff;background-color:#5798da}
+.cardbox .btn-primary{min-height:49px;border:0;border-radius:11px;background:linear-gradient(110deg,#74b9f5,#4c8fd2);box-shadow:0 8px 22px rgba(42,113,182,.25);font-weight:650;transition:transform .18s,filter .18s,box-shadow .18s}
+.cardbox .btn-primary:hover{transform:translateY(-1px);filter:brightness(1.08);box-shadow:0 11px 26px rgba(42,113,182,.32)}
+.cardbox .btn-primary:disabled{transform:none;filter:saturate(.65);cursor:wait}
+.cardbox .btn-outline-secondary{color:var(--glass-ink);border-color:var(--glass-line)}
+.cardbox .btn-link.link{color:var(--glass-link)!important;text-decoration:none}
+.cardbox .btn-link.link:hover{text-decoration:underline}
+.cardbox .progress{height:5px;margin:20px 0;background:rgba(255,255,255,.22)}
+.cardbox .progress-bar{background:#95c9fa;transition:width .25s ease}
+.cardbox .step:not(.active){display:none}
+.cardbox .step.active{display:block;animation:fadeUp .25s ease}
+.cardbox .alert{border:1px solid rgba(255,255,255,.2);border-radius:10px}
+.modal-backdrop.show{opacity:1;background:rgba(2,12,22,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.modal-content{--bs-modal-color:var(--glass-ink);--bs-modal-bg:rgba(17,38,57,.72);--bs-modal-border-color:var(--glass-line);overflow:hidden;border:1px solid var(--glass-line);border-radius:20px;color:var(--glass-ink);background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.09)),rgba(13,32,49,.82);box-shadow:0 28px 90px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.2);backdrop-filter:blur(28px) saturate(145%);-webkit-backdrop-filter:blur(28px) saturate(145%)}
+.modal-header,.modal-footer{border-color:rgba(255,255,255,.12)!important}
+.modal-header{padding:1.25rem 1.5rem 1rem}
+.modal-title{font-size:1.15rem;font-weight:650;letter-spacing:-.02em;color:var(--glass-ink)}
+.modal-body{padding:1.25rem 1.5rem;color:var(--glass-ink)}
+.modal-footer{padding:1rem 1.5rem 1.25rem}
+.modal-content .smallmuted,.modal-content .text-secondary{color:var(--glass-muted)!important}
+.modal-content .form-label{color:rgba(247,249,252,.92);font-size:.86rem;font-weight:600}
+.modal-content .form-control{min-height:46px;border:1px solid rgba(255,255,255,.22);border-radius:11px;color:var(--glass-ink);background:rgba(5,22,38,.34);box-shadow:none}
+.modal-content .form-control::placeholder{color:var(--glass-muted)}
+.modal-content .form-control:focus{border-color:rgba(169,211,255,.9);background:rgba(5,22,38,.5);box-shadow:0 0 0 3px rgba(125,184,245,.2)}
+.modal-content .bg-light{border:1px solid rgba(255,255,255,.17)!important;color:var(--glass-ink)!important;background:rgba(255,255,255,.1)!important}
+.modal-content code{color:#b9dcff}
+.modal-content .btn-primary{min-height:44px;border:0;border-radius:11px;background:linear-gradient(110deg,#74b9f5,#4c8fd2);box-shadow:0 8px 22px rgba(42,113,182,.25);font-weight:650}
+.modal-content .btn-outline-primary,.modal-content .btn-outline-secondary{border-color:rgba(255,255,255,.35);border-radius:11px;color:#e8f3ff}
+.modal-content .btn-outline-primary:hover,.modal-content .btn-outline-secondary:hover{border-color:rgba(255,255,255,.65);color:#fff;background:rgba(255,255,255,.12)}
+.modal-content .btn-secondary{border:1px solid rgba(255,255,255,.25);border-radius:11px;color:#f4f7fb;background:rgba(255,255,255,.12)}
+.modal-content .btn-close{filter:invert(1)}
+@media(max-width:760px){.brand{top:16px;right:16px;min-width:120px;min-height:54px;padding:6px 11px}.brand img{width:120px;max-height:40px}.shell{width:min(480px,calc(100% - 32px));min-height:100svh;padding:96px 0 32px;grid-template-columns:1fr;gap:28px;align-content:center}.hero{text-align:center;margin:auto}.hero h1{font-size:clamp(2rem,9vw,3rem);margin:12px auto}.hero p{font-size:.96rem;margin:0 auto}.cardbox{padding:26px 22px}.modal-header{padding:1rem 1.1rem .8rem}.modal-body{padding:1rem 1.1rem}.modal-footer{padding:.8rem 1.1rem 1rem}}
+@media(max-height:720px) and (min-width:761px){.shell{padding:96px 0 36px}.hero h1{font-size:clamp(2.3rem,4vw,3.4rem)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+.hero::before{content:none}
+.password-field{position:relative}
+.password-field .form-control{padding-right:3.25rem}
+.password-toggle{position:absolute;top:50%;right:7px;display:grid;width:36px;height:36px;place-items:center;transform:translateY(-50%);border:0;border-radius:9px;color:var(--glass-muted);background:transparent}
+.password-toggle:hover,.password-toggle:focus-visible{color:var(--glass-ink);background:rgba(255,255,255,.1)}
+.password-toggle:focus-visible{outline:2px solid rgba(169,211,255,.85);outline-offset:1px}
+.mobile-brand{display:none}
+.cardbox .form-text{color:var(--glass-muted)}
+.cardbox .form-check{min-height:unset}
+.cardbox .form-check-label{cursor:pointer}
+.cardbox .form-check-input{width:1rem;height:1rem;margin-top:.15em}
+.cardbox .btn-link{font-weight:600}
+.cardbox .btn:focus-visible{outline:3px solid rgba(130,190,244,.72);outline-offset:3px;box-shadow:none}
+@media(max-width:760px){
+    html,body{min-height:100%;min-height:100dvh}
+    html,body{touch-action:pan-y}
+    body{overflow:hidden}
+    .brand{display:none}
+    .shell{display:flex;width:100%;height:100vh;height:100dvh;min-height:100vh;min-height:100dvh;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:0}
+    .hero{display:none}
+    .cardbox{width:min(100%,440px);max-height:calc(100vh - 28px);max-height:calc(100dvh - 28px);margin:auto;padding:clamp(20px,6vw,26px);border-radius:22px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.28) transparent;animation:none}
+    .mobile-brand{display:flex;align-items:center;gap:9px;margin:0 0 16px;color:rgba(220,237,252,.82);font-size:.63rem;font-weight:750;letter-spacing:.11em}
+    .mobile-brand i{display:grid;width:30px;height:30px;place-items:center;border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#c8e5ff;background:rgba(255,255,255,.09)}
+    .cardbox h2{font-size:clamp(1.35rem,5.7vw,1.55rem);margin:5px 0}
+    .cardbox .sub{margin-bottom:17px;font-size:.88rem;line-height:1.45}
+    .cardbox .form-label{margin-bottom:.35rem;font-size:.8rem}
+    .cardbox .form-control{min-height:46px;padding:.6rem .78rem;font-size:.95rem}
+    .password-field .form-control{padding-right:3.1rem}
+    .cardbox .mb-3{margin-bottom:.75rem!important}
+    .cardbox .mb-4{margin-bottom:1rem!important}
+    .cardbox form>.d-flex{gap:.65rem}
+    .cardbox .btn-primary{min-height:46px}
+    .cardbox #loginForm .d-flex.justify-content-between{margin-bottom:1rem!important;gap:.5rem}
+    .cardbox #loginForm .smallmuted{font-size:.76rem}
+    .cardbox #loginPanel>.text-center,.cardbox #signupPanel>.text-center{margin-top:1rem!important;font-size:.82rem}
+    .cardbox .progress{margin:14px 0}
+    .cardbox .step.active .row>.col-sm-6{width:50%;padding-right:6px;padding-left:6px}
+    .cardbox .step.active .row{margin-right:-6px;margin-left:-6px}
+    .modal-dialog{margin:.75rem}
+    .modal-footer .btn{min-height:42px}
+}
+@media(max-width:360px){
+    .shell{padding:10px}
+    .cardbox{max-height:calc(100vh - 20px);max-height:calc(100dvh - 20px);padding:18px;border-radius:19px}
+    .mobile-brand{margin-bottom:12px;font-size:.57rem}
+    .cardbox #loginForm .d-flex.justify-content-between{align-items:flex-start!important;flex-direction:column}
+}
+@media(max-height:700px) and (max-width:760px){
+    .shell{padding:10px}
+    .cardbox{max-height:calc(100vh - 20px);max-height:calc(100dvh - 20px);padding:18px 20px}
+    .mobile-brand{display:none}
+    .cardbox .sub{margin-bottom:12px}
+    .cardbox .mb-3{margin-bottom:.55rem!important}
+    .cardbox .mb-4{margin-bottom:.75rem!important}
+    .cardbox #loginPanel>.text-center,.cardbox #signupPanel>.text-center{margin-top:.7rem!important}
+}
+.brand-entrance{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;overflow:hidden;padding:24px;background:radial-gradient(ellipse at 50% 43%,#f1f3f2 0%,rgba(241,243,242,0) 44%),linear-gradient(145deg,#e5eaee,#ecefed 52%,#e0e6ea);opacity:0;visibility:hidden;transition:opacity .8s cubic-bezier(.2,.7,.2,1),visibility .8s ease}
+.brand-entrance[hidden]{display:none}
+.brand-entrance.is-visible{opacity:1;visibility:visible}
+.brand-entrance:before{content:"";position:absolute;left:50%;top:46%;width:min(72vw,780px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(74,137,191,.19),rgba(94,139,176,.07) 42%,transparent 70%);filter:blur(28px);transform:translate(-50%,-50%);animation:brandGlow 4.8s ease-in-out infinite alternate}
+.brand-entrance__panel{position:relative;z-index:1;display:flex;width:min(720px,100%);flex-direction:column;align-items:center;justify-content:center;gap:34px;padding:24px;text-align:center;perspective:1100px}
+.brand-entrance__logo{display:block;width:min(100%,620px);height:auto;object-fit:contain;transform-style:preserve-3d;filter:drop-shadow(0 2px 1px rgba(13,29,44,.2)) drop-shadow(0 18px 17px rgba(35,62,83,.2)) drop-shadow(0 38px 38px rgba(50,77,96,.1));animation:brandLogoReveal 1.65s cubic-bezier(.18,.72,.18,1) both}
+.brand-entrance__caption{display:grid;justify-items:center;gap:17px;color:#4c6072;opacity:0;animation:brandCaptionReveal .8s ease-out .8s forwards}
+.brand-entrance__caption strong{font-size:10px;font-weight:650;letter-spacing:.22em;text-transform:uppercase}
+.brand-entrance__caption span{display:block;font-size:10px;letter-spacing:.04em;color:#758596}
+.brand-entrance__progress{width:min(190px,58vw);height:1px;overflow:hidden;background:rgba(190,214,239,.22)}
+.brand-entrance__progress:after{content:"";display:block;width:100%;height:100%;background:linear-gradient(90deg,#3d94ac,#4e78bb);transform:scaleX(0);transform-origin:left;animation:brandProgress 2.55s cubic-bezier(.35,.05,.2,1) forwards}
+@keyframes brandGlow{from{opacity:.58;scale:.94}to{opacity:1;scale:1.06}}
+@keyframes brandLogoReveal{0%{opacity:0;filter:blur(8px) drop-shadow(0 2px 1px rgba(13,29,44,.08));transform:rotateX(15deg) rotateY(-9deg) translate3d(0,24px,-45px) scale(.91)}58%{opacity:1;filter:blur(0) drop-shadow(0 2px 1px rgba(13,29,44,.2)) drop-shadow(0 18px 17px rgba(35,62,83,.2));transform:rotateX(-2deg) rotateY(2deg) translate3d(0,-3px,8px) scale(1.015)}100%{opacity:1;filter:blur(0) drop-shadow(0 2px 1px rgba(13,29,44,.2)) drop-shadow(0 18px 17px rgba(35,62,83,.2)) drop-shadow(0 38px 38px rgba(50,77,96,.1));transform:rotateX(0) rotateY(0) translate3d(0,0,0) scale(1)}}
+@keyframes brandCaptionReveal{to{opacity:1}}
+@keyframes brandProgress{to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.brand-entrance,.brand-entrance__panel{transition:none}.brand-entrance:before,.brand-entrance__logo,.brand-entrance__caption,.brand-entrance__progress:after{animation:none!important}.brand-entrance__logo,.brand-entrance__caption{opacity:1;filter:none;transform:none}.brand-entrance__progress:after{transform:scaleX(1)}}
+</style></head><body>
+    <video class="bg-video" autoplay muted loop playsinline aria-hidden="true" preload="metadata">
+    <source src="../page/hdjv clip.mp4" type="video/mp4">
+</video>
+
+<div class="video-overlay"></div>
+<div class="brand" aria-label="HDEC-Dongah Joint Venture"><img src="../page/HDJV brand.png" alt="HDEC-Dongah Joint Venture"></div><main class="shell"><section class="hero"><div class="eyebrow"><i class="fa-solid fa-cube me-2"></i>HDEC-DONGAH JOINT VENTURE</div>
+    <h1>Know what you have. Keep it secure.</h1><p>Manage equipment, inventory, and operational records in one secure workspace.</p></section>
+<section class="cardbox"><div class="mobile-brand"><i class="fa-solid fa-cube" aria-hidden="true"></i><span>HDEC-DONGAH JOINT VENTURE</span></div><div id="loginPanel"><div class="eyebrow mb-2">Welcome back</div><h2>Sign in to your account</h2><p class="sub">Use your employee ID and password to continue.</p><div id="loginAlert" role="alert" aria-live="polite"></div><form id="loginForm"><div class="mb-3"><label class="form-label" for="username">Employee ID / Username</label><input class="form-control" id="username" autocomplete="username" required placeholder="Enter your employee ID"></div><div class="mb-3"><label class="form-label" for="password">Password</label><div class="password-field"><input class="form-control" id="password" type="password" autocomplete="current-password" required placeholder="Enter your password"><button class="password-toggle" type="button" data-password-toggle="password" aria-label="Show password" aria-pressed="false"><i class="fa-solid fa-eye" aria-hidden="true"></i></button></div></div><div class="d-flex justify-content-between align-items-center mb-4"><label class="smallmuted"><input type="checkbox" id="remember" class="form-check-input me-1"> Remember this device</label><button type="button" class="btn btn-link link p-0" id="forgot">Forgot password?</button></div><button class="btn btn-primary w-100" id="loginBtn"><i class="fa-solid fa-arrow-right-to-bracket me-2"></i>Sign in</button></form><div class="text-center mt-4 smallmuted">New to the system? <button class="btn btn-link link p-0" id="signup">Create an account</button></div></div>
+<div id="signupPanel" hidden><div class="eyebrow mb-2">New account <span class="float-end smallmuted" id="stepLabel">Step 1 of 2</span></div><h2>Set up your profile</h2><p class="sub">Create an account for the asset management workspace.</p><div class="progress"><div class="progress-bar" id="progress" style="width:50%"></div></div><div id="signupAlert" role="alert" aria-live="polite"></div><form id="signupForm"><div class="step active" id="step1"><div class="row"><div class="col-sm-6 mb-3"><label class="form-label" for="first">First name</label><input class="form-control" id="first" required autocomplete="given-name"></div><div class="col-sm-6 mb-3"><label class="form-label" for="last">Last name</label><input class="form-control" id="last" required autocomplete="family-name"></div></div><div class="mb-3"><label class="form-label" for="dept">Department</label><input class="form-control" id="dept" list="depts" required><datalist id="depts"></datalist></div><div class="mb-4"><label class="form-label" for="area">Work area / site</label><input class="form-control" id="area" list="areas" required><datalist id="areas"></datalist></div><div class="d-flex gap-3"><button type="button" class="btn btn-outline-secondary w-50" id="cancel">Cancel</button><button type="button" class="btn btn-primary w-50" id="next">Next <i class="fa-solid fa-arrow-right ms-1"></i></button></div></div><div class="step" id="step2"><div class="mb-3"><label class="form-label" for="newUser">Employee ID / Username</label><input class="form-control" id="newUser" autocomplete="username" required></div><div class="mb-3"><label class="form-label" for="newPass">Password</label><div class="password-field"><input class="form-control" id="newPass" type="password" minlength="4" maxlength="72" autocomplete="new-password" required><button class="password-toggle" type="button" data-password-toggle="newPass" aria-label="Show password" aria-pressed="false"><i class="fa-solid fa-eye" aria-hidden="true"></i></button></div><div class="smallmuted mt-2">At least 4 characters. No special characters, uppercase letters, or numbers are required.</div></div><div class="mb-4"><label class="form-label" for="confirm">Confirm password</label><div class="password-field"><input class="form-control" id="confirm" type="password" minlength="4" maxlength="72" autocomplete="new-password" required><button class="password-toggle" type="button" data-password-toggle="confirm" aria-label="Show password" aria-pressed="false"><i class="fa-solid fa-eye" aria-hidden="true"></i></button></div></div><div class="d-flex gap-3"><button type="button" class="btn btn-outline-secondary w-50" id="back">Back</button><button class="btn btn-primary w-50" id="register">Create account</button></div></div></form><div class="text-center mt-4 smallmuted">Already registered? <button class="btn btn-link link p-0" id="signin">Sign in</button></div></div><div class="text-center smallmuted mt-4">© 2026 HDEC-Dongah JV · Secure access</div></section></main>
+<div class="brand-entrance" id="brandEntrance" role="status" aria-live="polite" aria-hidden="true" hidden>
+  <div class="brand-entrance__panel">
+    <img class="brand-entrance__logo" src="HDJV%20brand.png" alt="HDEC-Dongah Joint Venture">
+    <div class="brand-entrance__caption">
+      <strong>Secure workspace</strong>
+      <span id="entranceStatus">Verifying credentials</span>
+      <div class="brand-entrance__progress" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="accountIdModal" tabindex="-1" aria-labelledby="accountIdTitle"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="accountIdTitle">Save your permanent Account ID</h5></div><div class="modal-body"><p class="smallmuted">This 9-digit ID appears under your name in your profile. Keep it private; you will need it with your username if you forget your password.</p><div class="p-3 text-center bg-light rounded"><code id="newAccountId" class="fs-5 fw-bold text-primary"></code></div><button type="button" class="btn btn-outline-primary w-100 mt-3" id="copyNewAccountId">Copy Account ID</button></div><div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" id="savedAccountId">I saved my Account ID</button></div></div></div></div>
+<div class="modal fade" id="resetModal" tabindex="-1" aria-labelledby="resetTitle"><div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="resetTitle">Recover your password</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="smallmuted">Enter your username and private 9-digit Account ID. If they match, a temporary password will be generated. Keep it private and change it after sign-in.</p><div id="resetForm"><label for="resetUser" class="form-label">Username / Employee ID</label><input id="resetUser" class="form-control mb-3" maxlength="80" autocomplete="username"><label for="resetAccountId" class="form-label">Permanent Account ID</label><input id="resetAccountId" class="form-control" maxlength="9" minlength="9" pattern="[0-9]{9}" inputmode="numeric" autocomplete="off"></div><div id="temporaryPasswordResult" class="p-3 mt-3 text-center bg-light rounded" hidden><span class="smallmuted d-block">Temporary password · shown once</span><code id="temporaryPasswordValue" class="fs-5 fw-bold text-primary text-break"></code><button type="button" class="btn btn-outline-primary w-100 mt-3" id="copyTemporaryPassword">Copy temporary password</button><p class="smallmuted mt-2 mb-0">Sign in with this password, then choose a new one immediately.</p></div><div id="resetMessage" class="small mt-3" role="status"></div></div><div class="modal-footer"><button class="btn btn-secondary" id="closeReset" data-bs-dismiss="modal">Close</button><button class="btn btn-primary" id="sendReset">Generate temporary password</button></div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script><script>
+const API='auth_api.php',E=id=>document.getElementById(id);let csrf='',entranceStartedAt=0,entranceTimer=0;const resetModal=new bootstrap.Modal(E('resetModal')),accountIdModal=new bootstrap.Modal(E('accountIdModal'));const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const alert=(id,msg,kind='danger')=>E(id).innerHTML='<div class="alert alert-'+kind+'">'+esc(msg)+'</div>';
+function showBrandEntrance(){const entrance=E('brandEntrance');window.clearTimeout(entranceTimer);entranceStartedAt=performance.now();E('entranceStatus').textContent='Verifying credentials';entrance.hidden=false;entrance.setAttribute('aria-hidden','false');document.body.classList.add('entering-workspace');requestAnimationFrame(()=>entrance.classList.add('is-visible'))}
+function hideBrandEntrance(){const entrance=E('brandEntrance');entrance.classList.remove('is-visible');entrance.setAttribute('aria-hidden','true');window.setTimeout(()=>{if(!entrance.classList.contains('is-visible'))entrance.hidden=true},850)}
+function completeBrandEntrance(redirect){const entrance=E('brandEntrance');const target=new URL(redirect||'../Tracking/sidebar/sidebar.html',location.href);if(target.origin!==location.origin)target.href=new URL('../Tracking/sidebar/sidebar.html',location.href).href;E('entranceStatus').textContent='Opening workspace';const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;const minimumView=reducedMotion?450:650;const remaining=Math.max(minimumView,(reducedMotion?850:2850)-(performance.now()-entranceStartedAt));entranceTimer=window.setTimeout(()=>location.replace(target.href),remaining)}
+window.showBrandEntrance=showBrandEntrance;window.hideBrandEntrance=hideBrandEntrance;window.completeBrandEntrance=completeBrandEntrance;
+async function post(action,data){const r=await fetch(API+'?action='+action,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify(data)});const j=await r.json();if(!r.ok)throw Error(j.message||'Request failed');return j}
+async function init(){try{csrf=(await(await fetch(API+'?action=csrf',{credentials:'same-origin'})).json()).csrf;const o=await(await fetch(API+'?action=options')).json();for(const [vals,id] of [[o.departments,'depts'],[o.workAreas,'areas']])E(id).innerHTML=(vals||[]).map(x=>'<option value="'+esc(x)+'"></option>').join('')}catch(e){}}
+function panel(signup){E('loginPanel').hidden=signup;E('signupPanel').hidden=!signup;E('signup').setAttribute('aria-expanded',String(signup));document.querySelector('.cardbox').scrollTop=0}function step(n){E('step1').classList.toggle('active',n===1);E('step2').classList.toggle('active',n===2);E('progress').style.width=n===1?'50%':'100%';E('stepLabel').textContent='Step '+n+' of 2';document.querySelector('.cardbox').scrollTop=0}if(location.hash==='#signup')panel(true);
+document.querySelectorAll('[data-password-toggle]').forEach(button=>button.addEventListener('click',()=>{const input=E(button.dataset.passwordToggle);const visible=input.type==='password';input.type=visible?'text':'password';button.setAttribute('aria-label',visible?'Hide password':'Show password');button.setAttribute('aria-pressed',String(visible));button.innerHTML='<i class="fa-solid fa-eye'+(visible?'-slash':'')+'" aria-hidden="true"></i>'}));
+E('confirm').addEventListener('input',()=>E('confirm').setCustomValidity(''));
+E('signup').onclick=()=>panel(true);E('signin').onclick=E('cancel').onclick=()=>panel(false);E('next').onclick=()=>{for(const id of ['first','last','dept','area'])if(!E(id).value.trim()){E(id).focus();E(id).reportValidity();return}step(2)};E('back').onclick=()=>step(1);
+E('loginForm').onsubmit=async ev=>{ev.preventDefault();E('loginBtn').disabled=true;showBrandEntrance();try{const r=await post('login',{username:E('username').value.trim(),password:E('password').value,rememberDevice:E('remember').checked});completeBrandEntrance(r.redirect);if(navigator.geolocation)navigator.geolocation.getCurrentPosition(pos=>post('location',{latitude:pos.coords.latitude,longitude:pos.coords.longitude}).catch(()=>{}),()=>{},{timeout:5000,maximumAge:300000})}catch(e){hideBrandEntrance();alert('loginAlert',e.message);E('loginBtn').disabled=false}};
+E('signupForm').onsubmit=async ev=>{ev.preventDefault();if(E('newPass').value!==E('confirm').value){E('confirm').setCustomValidity('Passwords do not match.');E('confirm').reportValidity();return}E('register').disabled=true;try{const r=await post('register',{firstName:E('first').value.trim(),lastName:E('last').value.trim(),department:E('dept').value.trim(),workArea:E('area').value.trim(),username:E('newUser').value.trim(),password:E('newPass').value,confirmPassword:E('confirm').value});const registeredUsername=E('newUser').value.trim();E('newAccountId').textContent=r.accountId;E('username').value=registeredUsername;E('signupForm').reset();step(1);panel(false);accountIdModal.show()}catch(e){alert('signupAlert',e.message)}finally{E('register').disabled=false}};
+E('forgot').onclick=()=>{E('resetUser').value=E('username').value.trim();E('resetAccountId').value='';E('resetUser').disabled=false;E('resetAccountId').disabled=false;E('resetForm').hidden=false;E('temporaryPasswordResult').hidden=true;E('sendReset').hidden=false;E('resetMessage').textContent='';resetModal.show()};E('sendReset').onclick=async()=>{const missing=['resetUser','resetAccountId'].map(E).find(field=>!field.value.trim());if(missing){missing.focus();return}const button=E('sendReset');button.disabled=true;try{const r=await post('password_recover',{username:E('resetUser').value.trim(),accountId:E('resetAccountId').value.trim()});E('temporaryPasswordValue').textContent=r.temporaryPassword;E('resetForm').hidden=true;E('temporaryPasswordResult').hidden=false;E('sendReset').hidden=true;E('resetMessage').textContent=r.message;E('resetMessage').className='small mt-3 text-success'}catch(e){E('resetMessage').textContent=e.message;E('resetMessage').className='small mt-3 text-danger'}finally{button.disabled=false}};E('copyNewAccountId').onclick=async()=>{try{await navigator.clipboard.writeText(E('newAccountId').textContent);E('copyNewAccountId').textContent='Copied'}catch(e){E('copyNewAccountId').textContent='Select and copy the Account ID above'}};E('copyTemporaryPassword').onclick=async()=>{try{await navigator.clipboard.writeText(E('temporaryPasswordValue').textContent);E('copyTemporaryPassword').textContent='Copied'}catch(e){E('copyTemporaryPassword').textContent='Select and copy the password above'}};E('savedAccountId').onclick=()=>{alert('loginAlert','Account created. Sign in with your username and password.','success')};
+init();
+</script><script src="admin-login.js"></script></body></html>

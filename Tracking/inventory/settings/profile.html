@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style data-fixed-zoom>html,body{touch-action:pan-x pan-y}@media(max-width:760px){input,select,textarea{font-size:16px!important}}</style>
+  <title>Profile &amp; Workspaces</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --blue:#002c5f;--blue-light:#0d4f9a;--accent:#2563eb;
+      --bg:#f4f7fb;--card:#fff;--text:#0f172a;--muted:#64748b;
+      --border:#e2e8f0;--success:#047857;--danger:#b91c1c;
+      --shadow:0 10px 25px rgba(15,23,42,.07)
+    }
+    *{box-sizing:border-box}
+    body{margin:0;padding:14px;min-height:100vh;background:radial-gradient(circle at top left,#dcecff 0,transparent 30%),radial-gradient(circle at right,#eef4ff 0,transparent 25%),var(--bg);color:var(--text);font:14px/1.5 Inter,"Segoe UI",sans-serif}
+    button,input,select{font:inherit}
+    button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:9px 14px;border:1px solid transparent;border-radius:9px;background:var(--blue-light);color:#fff;font-weight:650;cursor:pointer;transition:background .18s,transform .18s,border-color .18s}
+    button:hover{background:var(--blue);transform:translateY(-1px)}
+    button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+    button:disabled{opacity:.58;cursor:wait;transform:none}
+    button.secondary{border-color:var(--border);background:#fff;color:#334155}
+    button.secondary:hover{background:#f8fafc;border-color:#cbd5e1}
+    button.danger{border-color:#fecaca;background:#fff;color:var(--danger)}
+    button.danger:hover{background:#fef2f2}
+    .page{width:100%;margin:0}
+    .dashboard-header{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:14px}
+    .eyebrow{margin:0 0 5px;color:var(--blue-light);font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+    h1{margin:0;color:var(--blue);font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.04em}
+    .subtitle{max-width:680px;margin:7px 0 0;color:var(--muted);font-size:14px}
+    .layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(300px,.9fr);gap:12px;align-items:start}
+    .stack{display:grid;gap:12px;min-width:0}
+    .card{min-width:0;padding:16px;background:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.85);border-radius:14px;box-shadow:var(--shadow)}
+    .card-title{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .card-title h2{margin:0;color:var(--blue);font-size:16px;font-weight:750}
+    .card-title p{margin:3px 0 0;color:var(--muted);font-size:12px}
+    .icon-box{display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;border-radius:11px;background:#eff6ff;color:var(--blue-light)}
+    .icon-box svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .profile-summary{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .avatar{display:grid;place-items:center;flex:0 0 54px;width:54px;height:54px;border-radius:16px;background:linear-gradient(140deg,var(--blue),#2870bc);color:#fff;font-size:19px;font-weight:800}
+    .person-name{margin:0;color:#10233c;font-size:17px;font-weight:750}
+    .person-meta{margin:3px 0 0;color:var(--muted);font-size:12px}
+    .person-account-id{display:flex;align-items:center;gap:6px;margin:2px 0 0;color:#475569;font-size:12px}
+    .person-account-id strong{font-family:ui-monospace,Consolas,monospace;font-size:12px;letter-spacing:.04em}
+    .account-id-toggle{width:30px;min-height:28px;padding:4px;border-color:transparent;background:transparent;color:#64748b}
+    .account-id-toggle:hover{background:#eff6ff;color:var(--blue)}
+    .account-id-toggle svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .profile-details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .profile-details .detail:last-child{grid-column:1/-1}
+    .detail{min-width:0;padding:11px 12px;border:1px solid #edf1f6;border-radius:10px;background:#fbfdff}
+    .detail-label{display:block;margin-bottom:3px;color:#8290a3;font-size:10px;font-weight:750;letter-spacing:.08em;text-transform:uppercase}
+    .detail-value{display:block;overflow:hidden;color:#23354d;font-size:13px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}
+    .card-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;padding-top:11px;border-top:1px solid #edf1f6}
+    .profile-actions{display:flex;flex-wrap:wrap;gap:7px}
+    .workspace-label{display:block;margin-bottom:6px;color:#475569;font-size:12px;font-weight:700}
+    .control{width:100%;min-height:42px;padding:9px 12px;border:1px solid #d6deea;border-radius:9px;background:#fff;color:#1e293b}
+    .hint{margin:7px 0 0;color:var(--muted);font-size:11px}
+    .workspace-actions{display:flex;gap:9px;margin-top:13px}
+    .workspace-actions button{flex:1}
+    .quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .quick-action{min-height:72px;justify-content:flex-start;padding:11px;text-align:left}
+    .quick-action .action-copy{display:grid;gap:3px}
+    .quick-action strong{font-size:12px}
+    .quick-action small{color:#dbeafe;font-size:10px;font-weight:450;line-height:1.35}
+    .quick-action.secondary small{color:var(--muted)}
+    .invite-note{display:flex;gap:9px;margin-top:14px;padding:11px 12px;border:1px solid #dbeafe;border-radius:10px;background:#f5f9ff;color:#52647b;font-size:11px}
+    .invite-note strong{color:var(--blue)}
+    .team-card{grid-column:1/-1}
+    .team-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+    .team-heading .card-title{margin:0}
+    .member-count{display:inline-flex;align-items:center;justify-content:center;min-width:27px;height:25px;padding:0 8px;border-radius:99px;background:#eff6ff;color:var(--blue-light);font-size:11px;font-weight:750}
+    .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:11px}
+    table{width:100%;border-collapse:collapse;text-align:left}
+    th,td{padding:12px 14px;border-bottom:1px solid #edf1f6;vertical-align:middle}
+    th{background:#f8fafc;color:#718096;font-size:10px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+    td{color:#334155;font-size:12px}
+    tbody tr:last-child td{border-bottom:0}
+    .member-name{color:#152b45;font-size:12px;font-weight:700}
+    .member-username{color:#8491a2;font-size:11px}
+    .role-select{width:auto;min-width:125px;min-height:34px;margin:0;padding:6px 28px 6px 9px;border-radius:8px;font-size:11px}
+    .empty-state{padding:26px 14px;color:var(--muted);text-align:center}
+    .empty-state strong{display:block;margin-bottom:4px;color:#334155}
+    .message{min-height:18px;margin:9px 0 0;color:var(--success);font-size:12px}
+    .message.error{color:var(--danger)}
+    .status-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:1px solid #bbf7d0;border-radius:99px;background:#f0fdf4;color:#166534;font-size:10px;font-weight:700}
+    .status-dot{width:6px;height:6px;border-radius:50%;background:#22c55e}
+    dialog{width:min(520px,calc(100% - 28px));max-height:min(88vh,760px);padding:0;overflow:auto;border:1px solid var(--border);border-radius:17px;background:#fff;color:var(--text);box-shadow:0 24px 70px rgba(15,23,42,.25)}
+    dialog::backdrop{background:rgba(15,23,42,.5);backdrop-filter:blur(3px)}
+    .dialog-header{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;padding:19px 21px;border-bottom:1px solid var(--border)}
+    .dialog-header h2{margin:0;color:var(--blue);font-size:18px}
+    .dialog-header p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .close-button{flex:0 0 34px;width:34px;min-height:34px;padding:0;border-color:var(--border);background:#fff;color:#64748b;font-size:20px}
+    .close-button:hover{background:#f8fafc;color:#0f172a}
+    .dialog-body{padding:18px}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+    .field{display:grid;gap:5px;color:#475569;font-size:11px;font-weight:700}
+    .field.full{grid-column:1/-1}
+    .dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:19px;padding-top:15px;border-top:1px solid #edf1f6}
+    .dialog-message{min-height:18px;margin:10px 0 0;color:var(--success);font-size:12px}
+    .dialog-message.error{color:var(--danger)}
+    .code-panel{margin:16px 0;padding:18px;border:1px dashed #93c5fd;border-radius:13px;background:linear-gradient(145deg,#f0f7ff,#f8fbff);text-align:center}
+    .code-label{display:block;color:var(--muted);font-size:10px;font-weight:750;letter-spacing:.1em;text-transform:uppercase}
+    .invite-code{display:block;margin:8px 0;color:var(--blue);font:800 clamp(26px,8vw,34px)/1.2 ui-monospace,Consolas,monospace;letter-spacing:.12em}
+    .code-expiry{color:var(--muted);font-size:11px}
+    .notice{padding:11px 12px;border:1px solid #dbeafe;border-radius:9px;background:#f5f9ff;color:#52647b;font-size:11px}
+    .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:700px){body{padding:10px}.dashboard-header{align-items:flex-start;flex-direction:column;margin-bottom:10px}.layout{grid-template-columns:1fr;gap:10px}.team-card{grid-column:auto}.stack{gap:10px}.card{padding:14px}.team-heading{align-items:flex-start}.table-wrap{border:0;overflow:visible}table,tbody{display:block;width:100%}thead{display:none}tbody{display:grid;gap:8px}tbody tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;padding:11px;border:1px solid var(--border);border-radius:11px;background:#fff}tbody td{padding:0;border:0}tbody td:first-child{grid-column:1/-1}tbody td:nth-child(2){grid-column:1/-1;color:var(--muted)}tbody td:last-child{justify-self:end}tbody td[colspan]{grid-column:1/-1}.role-select{min-width:112px}.member-remove{min-height:34px;padding:6px 10px;font-size:11px}}
+    @media(max-width:480px){.quick-actions{grid-template-columns:1fr}.quick-action{min-height:60px}.profile-details{gap:7px}.detail{padding:9px}.card-footer{align-items:flex-start;flex-direction:column}.profile-actions{width:100%}.profile-actions button{flex:1}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.dialog-header,.dialog-body{padding:15px}.dialog-actions button{flex:1}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+  <link rel="stylesheet" href="../../style/modern-ui.css?v=20261013-darkblue4">
+  <script src="../../sidebar/ui-theme.js?v=20261012-theme3"></script>
+  <script src="../../sidebar/ui-theme.js?v=20261012-theme3"></script>
+</head>
+<body class="control-content-page profile-workspace-page">
+<main class="page">
+  <header class="dashboard-header control-page-hero">
+    <div>
+      <p class="eyebrow"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3Z"/><path d="m19 14 1.1 2.9L23 18l-2.9 1.1L19 22l-1.1-2.9L15 18l2.9-1.1L19 14Z"/></svg> System Control · Account management</p>
+      <h1>Profile &amp; Workspaces</h1>
+      <p class="subtitle">Manage your personal details, move between team workspaces, and decide who can access your inventory.</p>
+    </div>
+    <span class="status-badge"><span class="status-dot" aria-hidden="true"></span>Secure workspace access</span>
+  </header>
+
+  <div class="layout">
+    <div class="stack">
+      <section class="card" aria-labelledby="profileHeading">
+        <div class="card-title">
+          <span class="icon-box" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg></span>
+          <div><h2 id="profileHeading">Your profile</h2><p>Your account details and work information</p></div>
+        </div>
+        <div class="profile-summary">
+          <div class="avatar" id="profileAvatar" aria-hidden="true">--</div>
+          <div>
+            <p class="person-name" id="profileName">Loading profile…</p>
+            <p class="person-account-id"><span>ID:</span><strong id="profileAccountId" aria-live="polite">•••••••••</strong><button class="account-id-toggle" type="button" id="toggleAccountId" aria-label="Show Account ID" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button></p>
+            <p class="person-meta" id="profileUsername"></p>
+          </div>
+        </div>
+        <div class="profile-details">
+          <div class="detail"><span class="detail-label">Department</span><span class="detail-value" id="profileDepartment">—</span></div>
+          <div class="detail"><span class="detail-label">Work area / site</span><span class="detail-value" id="profileWorkArea">—</span></div>
+        </div>
+        <div class="card-footer">
+          <span class="person-meta">Keep your account information up to date.</span>
+          <div class="profile-actions">
+            <button type="button" class="secondary" id="openPassword">Change password</button>
+            <button type="button" class="secondary" id="openProfile">Edit profile</button>
+          </div>
+        </div>
+        <p class="message" id="profileMessage" role="status"></p>
+      </section>
+
+      <section class="card" id="teamCard" aria-labelledby="teamHeading">
+        <div class="team-heading">
+          <div class="card-title">
+            <span class="icon-box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            <div><h2 id="teamHeading">Workspace access</h2><p>Manage teammates who can access your workspace</p></div>
+          </div>
+          <span class="member-count" id="memberCount" aria-label="Team member count">0</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Teammate</th><th scope="col">Access level</th><th scope="col">Joined</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+            <tbody id="memberRows"><tr><td colspan="4" class="empty-state">Loading workspace members…</td></tr></tbody>
+          </table>
+        </div>
+        <p class="message" id="membersMessage" role="status"></p>
+      </section>
+    </div>
+
+    <aside class="stack">
+      <section class="card" id="workspaceCard" aria-labelledby="workspaceHeading">
+        <div class="card-title">
+          <span class="icon-box" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 8h2M15 12h2M15 16h2"/></svg></span>
+          <div><h2 id="workspaceHeading">Active workspace</h2><p>Switch between your own and shared spaces</p></div>
+        </div>
+        <label class="workspace-label" for="workspaceSelect">Choose a workspace</label>
+        <select class="control" id="workspaceSelect" aria-describedby="workspaceHint"></select>
+        <p class="hint" id="workspaceHint">Your selection is saved for your next sign-in.</p>
+        <div class="workspace-actions"><button type="button" id="switchWorkspace">Switch workspace</button></div>
+        <p class="message" id="workspaceMessage" role="status"></p>
+      </section>
+
+      <section class="card" id="teamActionsCard" aria-labelledby="teamActionsHeading">
+        <div class="card-title">
+          <span class="icon-box" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span>
+          <div><h2 id="teamActionsHeading">Team actions</h2><p>Invite teammates or join an existing workspace</p></div>
+        </div>
+        <div class="quick-actions">
+          <button type="button" id="openInvite" class="quick-action">
+            <span class="action-copy"><strong>Invite a teammate</strong><small>Create a one-time access code</small></span>
+          </button>
+          <button type="button" id="openJoin" class="quick-action secondary">
+            <span class="action-copy"><strong>Join a workspace</strong><small>Enter a teammate's invitation code</small></span>
+          </button>
+        </div>
+        <div class="invite-note"><span aria-hidden="true">i</span><span><strong>Codes are private.</strong> Invite codes work once and expire after 7 days. Share them directly with the intended teammate.</span></div>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<dialog id="profileDialog" aria-labelledby="profileDialogTitle">
+  <form id="profileForm">
+    <header class="dialog-header"><div><h2 id="profileDialogTitle">Edit profile</h2><p>Update the personal and work details on your account.</p></div><button class="close-button" type="button" data-close="profileDialog" aria-label="Close">×</button></header>
+    <div class="dialog-body">
+      <div class="form-grid">
+        <label class="field">First name<input class="control" id="firstName" maxlength="100" required></label>
+        <label class="field">Last name<input class="control" id="lastName" maxlength="100" required></label>
+        <label class="field">Department<input class="control" id="department" maxlength="150" required></label>
+        <label class="field">Work area / site<input class="control" id="workArea" maxlength="150" required></label>
+      </div>
+      <p class="dialog-message" id="profileDialogMessage" role="status"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="profileDialog">Cancel</button><button type="submit" id="saveProfile">Save changes</button></div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="passwordDialog" aria-labelledby="passwordDialogTitle">
+  <form id="passwordForm">
+    <header class="dialog-header"><div><h2 id="passwordDialogTitle">Change password</h2><p>Confirm your account details and current password.</p></div><button class="close-button" type="button" data-close="passwordDialog" aria-label="Close">×</button></header>
+    <div class="dialog-body">
+      <div class="form-grid">
+        <label class="field full">Username<input class="control" id="passwordUsername" maxlength="80" autocomplete="username" required></label>
+        <label class="field full">Account ID<input class="control" id="passwordAccountId" maxlength="9" minlength="9" pattern="[0-9]{9}" inputmode="numeric" autocomplete="off" required></label>
+        <label class="field full">Current password<input class="control" id="oldPassword" type="password" autocomplete="current-password" required></label>
+        <label class="field">New password<input class="control" id="newPassword" type="password" minlength="4" maxlength="72" autocomplete="new-password" required><span class="hint">At least 4 characters. No special characters, uppercase letters, or numbers are required.</span></label>
+        <label class="field">Confirm new password<input class="control" id="confirmNewPassword" type="password" minlength="4" maxlength="72" autocomplete="new-password" required></label>
+      </div>
+      <p class="dialog-message" id="passwordMessage" role="status"></p>
+      <div class="dialog-actions" style="justify-content:space-between">
+        <button type="button" class="secondary" id="openForgotPassword">Forgot your current password?</button>
+        <span><button type="button" class="secondary" data-close="passwordDialog">Cancel</button> <button type="submit" id="savePassword">Change password</button></span>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="forgotPasswordDialog" aria-labelledby="forgotPasswordTitle">
+  <form id="forgotPasswordForm">
+    <header class="dialog-header"><div><h2 id="forgotPasswordTitle">Recover your password</h2><p>Verify your username and permanent Account ID.</p></div><button class="close-button" type="button" data-close="forgotPasswordDialog" aria-label="Close">×</button></header>
+    <div class="dialog-body">
+      <div class="notice">If the details match, a one-time temporary password will be generated and shown once. Keep your Account ID private. Sign in with the temporary password and change it immediately.</div>
+      <div class="form-grid" style="margin-top:14px">
+        <label class="field full">Username / employee ID<input class="control" id="resetUsername" maxlength="80" autocomplete="username" required></label>
+        <label class="field full">Permanent Account ID<input class="control" id="resetAccountId" maxlength="9" minlength="9" pattern="[0-9]{9}" inputmode="numeric" autocomplete="off" required></label>
+      </div>
+      <p class="dialog-message" id="forgotMessage" role="status"></p>
+      <section class="code-panel" id="temporaryPasswordPanel" hidden><span class="code-label">Temporary password · shown once</span><code class="invite-code" id="temporaryPasswordDisplay"></code><span class="code-expiry">Copy it now. You must change it after signing in.</span><div class="dialog-actions"><button type="button" class="secondary" id="copyTemporaryPassword">Copy password</button><button type="button" id="finishRecovery">Done</button></div></section>
+      <div class="dialog-actions" id="recoveryActions"><button type="button" class="secondary" id="backToPassword">Back</button><button type="submit" id="submitResetRequest">Generate temporary password</button></div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="inviteDialog" aria-labelledby="inviteDialogTitle">
+  <header class="dialog-header"><div><h2 id="inviteDialogTitle">Invite a teammate</h2><p>Generate a one-time code to share privately.</p></div><button class="close-button" type="button" data-close="inviteDialog" aria-label="Close">×</button></header>
+  <div class="dialog-body">
+    <div class="notice">Your teammate must sign in to their own account before joining. New teammates can create an account first, then enter this code.</div>
+    <div id="inviteCodePanel" class="code-panel" hidden><span class="code-label">Invitation code</span><code class="invite-code" id="inviteCodeDisplay"></code><span class="code-expiry" id="inviteExpiry"></span></div>
+    <p class="dialog-message" id="inviteMessage" role="status"></p>
+    <div class="dialog-actions"><button type="button" class="secondary" data-close="inviteDialog">Close</button><button type="button" id="generateInvite">Generate code</button><button type="button" id="copyInvite" class="secondary" hidden>Copy code</button></div>
+  </div>
+</dialog>
+
+<dialog id="joinDialog" aria-labelledby="joinDialogTitle">
+  <form id="joinForm">
+    <header class="dialog-header"><div><h2 id="joinDialogTitle">Join a workspace</h2><p>Enter the invitation code shared by your teammate.</p></div><button class="close-button" type="button" data-close="joinDialog" aria-label="Close">×</button></header>
+    <div class="dialog-body">
+      <label class="field" for="inviteCode">8-character invitation code<input class="control" id="inviteCode" maxlength="8" minlength="8" pattern="[A-Za-z0-9]{8}" autocomplete="off" placeholder="e.g. aiuwe132" required></label>
+      <p class="hint">Joining adds the shared workspace to your account. You can switch back to your own workspace whenever you like.</p>
+      <p class="dialog-message" id="joinMessage" role="status"></p>
+      <div class="dialog-actions"><button type="button" class="secondary" data-close="joinDialog">Cancel</button><button type="submit" id="joinWorkspace">Join workspace</button></div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="removeDialog" aria-labelledby="removeDialogTitle">
+  <header class="dialog-header"><div><h2 id="removeDialogTitle">Remove workspace access?</h2><p id="removePrompt">This teammate will no longer be able to open this workspace.</p></div><button class="close-button" type="button" data-close="removeDialog" aria-label="Close">×</button></header>
+  <div class="dialog-body"><p class="dialog-message" id="removeMessage" role="status"></p><div class="dialog-actions"><button type="button" class="secondary" data-close="removeDialog">Cancel</button><button type="button" class="danger" id="confirmRemove">Remove access</button></div></div>
+</dialog>
+
+<script src="../../sidebar/language.js?v=20261013-language3"></script>
+<script>
+(() => {
+  const API='../../../page/auth_api.php';
+  const byId=id=>document.getElementById(id);
+  const dialogs=['profileDialog','passwordDialog','forgotPasswordDialog','inviteDialog','joinDialog','removeDialog'].map(byId);
+  let csrf='';
+  let accountIdVisible=false;
+  let currentUser=null;
+  let pendingRemoval=null;
+  const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  function message(id,text,error=false){const element=byId(id);element.textContent=text;element.classList.toggle('error',error);}
+  async function request(action,body){
+    const response=await fetch(`${API}?action=${encodeURIComponent(action)}`,{
+      method:body?'POST':'GET',credentials:'same-origin',cache:'no-store',
+      headers:body?{'Content-Type':'application/json','X-CSRF-Token':csrf}:{},
+      body:body?JSON.stringify(body):undefined
+    });
+    const result=await response.json();
+    if(!response.ok||!result.success)throw new Error(result.message||`Request failed (${response.status}).`);
+    return result;
+  }
+  function displayProfile(user){
+    currentUser=user;
+    if(window.AssetMonitorLanguage)window.AssetMonitorLanguage.set(user.LanguagePreference==='ko'?'ko':'en');
+    const fullName=`${user.FirstName||''} ${user.LastName||''}`.trim();
+    byId('profileName').textContent=fullName||'Account profile';
+    byId('profileUsername').textContent=user.Username||'';
+    byId('profileDepartment').textContent=user.Department||'Not set';
+    byId('profileWorkArea').textContent=user.WorkArea||'Not set';
+    byId('profileAccountId').textContent=accountIdVisible?(user.AccountID||'Unavailable'):'•••••••••';
+    byId('profileAvatar').textContent=fullName.split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0].toUpperCase()).join('')||'--';
+    for(const [id,key] of [['firstName','FirstName'],['lastName','LastName'],['department','Department'],['workArea','WorkArea']])byId(id).value=user[key]||'';
+  }
+  function renderMembers(members){
+    byId('memberCount').textContent=String(members.length);
+    const rows=byId('memberRows');
+    if(!members.length){
+      rows.innerHTML='<tr><td colspan="4"><div class="empty-state"><strong>No teammates yet</strong>Generate an invitation code to give a teammate access to this workspace.</div></td></tr>';
+      return;
+    }
+    rows.innerHTML=members.map(member=>`<tr>
+      <td><span class="member-name">${escapeHtml(member.FirstName)} ${escapeHtml(member.LastName)}</span><br><span class="member-username">${escapeHtml(member.Username)}</span></td>
+      <td><label class="visually-hidden" for="role-${Number(member.userId)}">Access level for ${escapeHtml(member.Username)}</label><select class="control role-select" id="role-${Number(member.userId)}" data-role-user="${Number(member.userId)}"><option value="viewer" ${member.Role==='viewer'?'selected':''}>View only</option><option value="editor" ${member.Role==='editor'?'selected':''}>Can edit</option></select></td>
+      <td>${escapeHtml(String(member.JoinedAt||'').slice(0,10))}</td>
+      <td><button type="button" class="danger member-remove" data-remove-user="${Number(member.userId)}">Remove</button></td>
+    </tr>`).join('');
+    rows.querySelectorAll('[data-role-user]').forEach(select=>select.addEventListener('change',async()=>{
+      select.disabled=true;
+      try{await request('member_role',{userId:Number(select.dataset.roleUser),role:select.value});message('membersMessage','Member access updated.');}
+      catch(error){message('membersMessage',error.message,true);await loadMembers().catch(showMembersError);}
+      finally{select.disabled=false;}
+    }));
+    rows.querySelectorAll('[data-remove-user]').forEach(button=>button.addEventListener('click',()=>{
+      pendingRemoval=Number(button.dataset.removeUser);
+      const member=members.find(item=>Number(item.userId)===pendingRemoval);
+      byId('removePrompt').textContent=`${member?.FirstName||'This teammate'} will no longer be able to open this workspace.`;
+      message('removeMessage','');
+      byId('removeDialog').showModal();
+    }));
+  }
+  async function loadMembers(){const data=await request('team_members');renderMembers(data.members);}
+  function showMembersError(error){message('membersMessage',error.message,true);}
+  async function load(){
+    const profile=await request('profile');
+    displayProfile(profile.user);
+    if(Number(profile.user.MustChangePassword)===1){
+      byId('workspaceCard').hidden=true;byId('teamCard').hidden=true;byId('teamActionsCard').hidden=true;byId('openProfile').hidden=true;
+      byId('passwordUsername').value=profile.user.Username||'';byId('passwordAccountId').value=profile.user.AccountID||'';
+      byId('openForgotPassword').hidden=true;
+      byId('passwordDialogTitle').textContent='Set your new password';
+      byId('passwordDialog').querySelectorAll('[data-close="passwordDialog"]').forEach(button=>button.hidden=true);
+      message('passwordMessage','A temporary password was used. Choose a new password before continuing.');
+      byId('passwordDialog').addEventListener('cancel',event=>event.preventDefault());
+      openDialog('passwordDialog');
+      return;
+    }
+    const workspaces=await request('workspaces');
+    byId('workspaceSelect').innerHTML=workspaces.workspaces.map(workspace=>`<option value="${Number(workspace.ownerId)}" ${Number(workspace.ownerId)===Number(workspaces.activeOwnerId)?'selected':''}>${escapeHtml(workspace.name)} · ${escapeHtml(workspace.role)}</option>`).join('');
+    await loadMembers();
+  }
+  async function initialize(){
+    try{
+      const response=await fetch(`${API}?action=csrf`,{credentials:'same-origin',cache:'no-store'});
+      const result=await response.json();
+      if(!response.ok||!result.success)throw new Error(result.message||'Could not start a secure session.');
+      csrf=result.csrf;await load();
+    }catch(error){message('profileMessage',error.message,true);byId('profileName').textContent='Sign in required';}
+  }
+  function openDialog(id){byId(id).showModal();}
+  document.querySelectorAll('[data-close]').forEach(button=>button.addEventListener('click',()=>byId(button.dataset.close).close()));
+  dialogs.forEach(dialog=>dialog.addEventListener('click',event=>{if(event.target===dialog&&!(dialog.id==='passwordDialog'&&Number(currentUser?.MustChangePassword)===1))dialog.close();}));
+  byId('openProfile').addEventListener('click',()=>{if(currentUser)displayProfile(currentUser);message('profileDialogMessage','');openDialog('profileDialog');});
+  byId('toggleAccountId').addEventListener('click',()=>{
+    accountIdVisible=!accountIdVisible;
+    byId('profileAccountId').textContent=accountIdVisible?(currentUser?.AccountID||'Unavailable'):'•••••••••';
+    byId('toggleAccountId').setAttribute('aria-pressed',String(accountIdVisible));
+    byId('toggleAccountId').setAttribute('aria-label',accountIdVisible?'Hide Account ID':'Show Account ID');
+    byId('toggleAccountId').innerHTML=accountIdVisible
+      ?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.2A10.8 10.8 0 0 1 12 5c6.4 0 10 7 10 7a15 15 0 0 1-3.1 3.8M6.2 6.2C3.5 8 2 12 2 12s3.6 7 10 7a10 10 0 0 0 4-.8"/></svg>'
+      :'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  });
+  byId('openPassword').addEventListener('click',()=>{
+    byId('passwordForm').reset();byId('passwordUsername').value=currentUser?.Username||'';byId('passwordAccountId').value=currentUser?.AccountID||'';
+    message('passwordMessage','');openDialog('passwordDialog');
+  });
+  byId('openForgotPassword').addEventListener('click',()=>{
+    byId('passwordDialog').close();byId('forgotPasswordForm').reset();
+    if(currentUser){
+      byId('resetUsername').value=currentUser.Username||'';
+      byId('resetAccountId').value=currentUser.AccountID||'';
+    }
+    byId('recoveryActions').hidden=false;byId('temporaryPasswordPanel').hidden=true;byId('submitResetRequest').disabled=false;
+    message('forgotMessage','');openDialog('forgotPasswordDialog');
+  });
+  byId('backToPassword').addEventListener('click',()=>{byId('forgotPasswordDialog').close();openDialog('passwordDialog');});
+  byId('passwordForm').addEventListener('submit',async event=>{
+    event.preventDefault();const button=byId('savePassword');button.disabled=true;
+    try{
+      const result=await request('password_change',{
+        username:byId('passwordUsername').value.trim(),
+        accountId:byId('passwordAccountId').value.trim(),
+        oldPassword:byId('oldPassword').value,
+        newPassword:byId('newPassword').value,
+        confirmPassword:byId('confirmNewPassword').value
+      });
+      byId('passwordForm').reset();byId('passwordDialog').close();
+      if(currentUser&&Number(currentUser.MustChangePassword)===1){window.location.replace('../../../page/login.html');return;}
+      message('profileMessage',result.message);
+    }catch(error){message('passwordMessage',error.message,true);}
+    finally{button.disabled=false;}
+  });
+  byId('forgotPasswordForm').addEventListener('submit',async event=>{
+    event.preventDefault();const button=byId('submitResetRequest');button.disabled=true;
+    try{
+      const result=await request('password_recover',{
+        username:byId('resetUsername').value.trim(),
+        accountId:byId('resetAccountId').value.trim()
+      });
+      byId('temporaryPasswordDisplay').textContent=result.temporaryPassword;
+      byId('temporaryPasswordPanel').hidden=false;byId('recoveryActions').hidden=true;
+      message('forgotMessage',result.message);
+    }catch(error){message('forgotMessage',error.message,true);}
+    finally{button.disabled=false;}
+  });
+  byId('copyTemporaryPassword').addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText(byId('temporaryPasswordDisplay').textContent);message('forgotMessage','Temporary password copied. Keep it private and change it after signing in.');}
+    catch(error){message('forgotMessage','Copy was unavailable. Select and copy the temporary password above.',true);}
+  });
+  byId('finishRecovery').addEventListener('click',()=>window.location.replace('../../../page/login.html'));
+  byId('openInvite').addEventListener('click',()=>{
+    byId('inviteCodePanel').hidden=true;byId('copyInvite').hidden=true;
+    byId('generateInvite').hidden=false;message('inviteMessage','');openDialog('inviteDialog');
+  });
+  byId('openJoin').addEventListener('click',()=>{byId('inviteCode').value='';message('joinMessage','');openDialog('joinDialog');});
+  byId('profileForm').addEventListener('submit',async event=>{
+    event.preventDefault();const button=byId('saveProfile');button.disabled=true;
+    try{
+      await request('profile_update',{firstName:byId('firstName').value.trim(),lastName:byId('lastName').value.trim(),department:byId('department').value.trim(),workArea:byId('workArea').value.trim()});
+      const data=await request('profile');displayProfile(data.user);byId('profileDialog').close();message('profileMessage','Profile updated.');
+    }catch(error){message('profileDialogMessage',error.message,true);}
+    finally{button.disabled=false;}
+  });
+  byId('generateInvite').addEventListener('click',async()=>{
+    const button=byId('generateInvite');button.disabled=true;message('inviteMessage','');
+    try{
+      const result=await request('invite_create',{});
+      byId('inviteCodeDisplay').textContent=result.code;
+      byId('inviteExpiry').textContent=`Valid for ${result.expiresInDays} days · can only be used once`;
+      byId('inviteCodePanel').hidden=false;byId('copyInvite').hidden=false;button.hidden=true;
+    }catch(error){message('inviteMessage',error.message,true);}
+    finally{button.disabled=false;}
+  });
+  byId('copyInvite').addEventListener('click',async()=>{
+    try{await navigator.clipboard.writeText(byId('inviteCodeDisplay').textContent);message('inviteMessage','Invitation code copied. Share it privately with your teammate.');}
+    catch(error){message('inviteMessage','Copy was unavailable. Select and copy the code above.',true);}
+  });
+  byId('joinForm').addEventListener('submit',async event=>{
+    event.preventDefault();const button=byId('joinWorkspace');button.disabled=true;
+    try{
+      const result=await request('invite_join',{code:byId('inviteCode').value.trim()});
+      byId('joinDialog').close();message('workspaceMessage',result.message);
+      setTimeout(()=>window.parent.location.reload(),450);
+    }catch(error){message('joinMessage',error.message,true);}
+    finally{button.disabled=false;}
+  });
+  byId('switchWorkspace').addEventListener('click',async()=>{
+    const button=byId('switchWorkspace');button.disabled=true;
+    try{
+      const result=await request('workspace_switch',{ownerId:Number(byId('workspaceSelect').value)});
+      message('workspaceMessage',result.message);setTimeout(()=>window.parent.location.reload(),300);
+    }catch(error){message('workspaceMessage',error.message,true);}
+    finally{button.disabled=false;}
+  });
+  byId('confirmRemove').addEventListener('click',async()=>{
+    if(!pendingRemoval)return;
+    const button=byId('confirmRemove');button.disabled=true;
+    try{await request('member_remove',{userId:pendingRemoval});byId('removeDialog').close();pendingRemoval=null;message('membersMessage','Workspace access removed.');await loadMembers();}
+    catch(error){message('removeMessage',error.message,true);}
+    finally{button.disabled=false;}
+  });
+  initialize();
+})();
+</script>
+</body>
+</html>

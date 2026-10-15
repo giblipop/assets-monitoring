@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style data-fixed-zoom>html,body{touch-action:pan-x pan-y}@media(max-width:760px){input,select,textarea{font-size:16px!important}}</style>
+  <meta charset="UTF-8">
+  <title>Inventory Viewer</title>
+  <link rel="stylesheet" href="../../style/modern-ui.css?v=20261013-darkblue4">
+  <script src="../../sidebar/ui-theme.js?v=20261012-theme3"></script>
+  <script src="../../sidebar/language.js?v=20261013-language3"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+    h2 { margin-top: 40px; color: #333; }
+    table { border-collapse: collapse; width: 100%; margin-bottom: 30px; background: #fff; }
+    th, td { border: 1px solid #ccc; padding: 8px 12px; text-align: left; }
+    th { background: #eee; }
+  </style>
+</head>
+<body>
+  <h1>Database Data Viewer</h1>
+
+  <h2>Sidebars (navigation_menu)</h2>
+  <table id="sidebarsTable"></table>
+
+  <div id="sidebarsSection"></div>
+<div id="inventorySection"></div>
+
+<script>
+  fetch("data.php")
+    .then(response => response.json())
+    .then(data => {
+      // Sidebars
+      const sidebarsSection = document.getElementById("sidebarsSection");
+      const sidebarHeading = document.createElement("h2");
+      sidebarHeading.textContent = `Sidebars (navigation_menu) — Count: ${data.sidebars.count}`;
+      sidebarsSection.appendChild(sidebarHeading);
+
+      const sidebarTable = document.createElement("table");
+      sidebarsSection.appendChild(sidebarTable);
+      renderTable(sidebarTable, data.sidebars.rows);
+
+      // Inventory
+      const inventorySection = document.getElementById("inventorySection");
+      for (const [tableName, tableData] of Object.entries(data.inventory)) {
+        const heading = document.createElement("h2");
+        heading.textContent = `Inventory (${tableName}) — Count: ${tableData.count}`;
+        inventorySection.appendChild(heading);
+
+        const table = document.createElement("table");
+        inventorySection.appendChild(table);
+        renderTable(table, tableData.rows);
+      }
+    });
+
+  function renderTable(tableElement, rows) {
+    tableElement.innerHTML = "";
+    if (!rows || rows.length === 0) {
+      tableElement.innerHTML = "<tr><td>No data found</td></tr>";
+      return;
+    }
+
+    const headers = Object.keys(rows[0]);
+    const headerRow = document.createElement("tr");
+    headers.forEach(h => {
+      const th = document.createElement("th");
+      th.textContent = h;
+      headerRow.appendChild(th);
+    });
+    tableElement.appendChild(headerRow);
+
+    rows.forEach(row => {
+      const tr = document.createElement("tr");
+      headers.forEach(h => {
+        const td = document.createElement("td");
+        td.textContent = row[h];
+        tr.appendChild(td);
+      });
+      tableElement.appendChild(tr);
+    });
+  }
+</script>
+
+</body>
+</html>
